@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html onkeydown="keydown()">
+
+<head>
+    <meta charset="utf-8">
+    <title>刷积分搜索</title>
+</head>
+
+<body>
+    <div class="center">
+        <h3>
+            <p>刷微软积分搜索运行中 </p>
+            </h1>
+            <p id="index">开始</p>
+            <p color="dakgray"><i>按<font color='darkviolet  '>上下键</font> 开始/暂停，按<font color='darkviolet  '>← →键</font>
+                    跳到下一个搜索</i></p>
+            <p id="showtime">倒计时等待</p>
+
+            <p id="showKeyword">即将搜索</p>
+    </div>
+</body>
+
+<script>
+
+    var hosts = "https://cn.bing.com/search?q=";
+
+    var keywords = [
+        "鼠头鸭脖",
+        "胡塞武装截断红海航线",
+        "波音飞机事故频出",
+        "法国最年轻总理",
+        "厄瓜多尔进入“战争状态”",
+        "农民抗议浪潮席卷欧洲",
+        "丹麦女王退位",
+        "朝鲜半岛局势升温",
+        "不结盟运动峰会",
+        "巴西再工业化",
+        "“末日时钟”被拨到距午夜90秒",
+        "日本登月探测器着陆",
+        "韩国政治刺杀",
+        "访乌归来后，布林肯正推动允许乌使用美制武器攻击俄领土",
+        "南阳市方城县学校一宿舍发生火灾 13人遇难1人受伤",
+        "华为问界M7高速车祸",
+        "华为251事件",
+        "四无青年",
+        "四不青年现象有所抬头",
+        "当前我市 四不青年 现象有所抬头",
+        "不买房不买车不结婚不生孩子",
+        "当前我市四不青年",
+        "四无青年指的是什么",
+        "不结婚不生娃不买房不消费",
+        "不结婚不生孩子不买房",
+        "当前我市四不青年现象",
+        "楼市下跌",
+        "全国房价下跌最新消息",
+        "房价为什么下跌这么快最近",
+        "中国楼市下跌",
+        "房价下跌原因",
+        "房价为什么会跌",
+        "楼市暴跌",
+        "楼市为什么会崩",
+        "楼市下跌",
+        "躺平",
+        "躺平 百科",
+        "躺平是什么意思",
+        "躺平游戏",
+        "躺平即是正义",
+        "躺平 英文",
+        "躺平一词",
+        "躺平公式",
+        "躺平",
+        "躺平既是正义 原文",
+        "躺平即正义原文",
+        "躺平即是正义原帖",
+        "躺平即是正义 好心的旅行家",
+        "躺平即是正义2021",
+        "躺平即是正义pdf",
+        "躺平即是正义 全文",
+        "穷fire组",
+        "躺平fire",
+        "咖啡师fire",
+        "穷fire是什么意思",
+        "fire生活穷版",
+        "fire生活穷版小组",
+        "躺平fire是什么意思",
+        "fire计算器",
+        "耻辱wiki",
+        "耻辱",
+        "dishonored游戏",
+        "dishonored漫画",
+        "dishonored中文",
+        "dishonored百科",
+        "dishonored中文补丁",
+        "冤罪杀机",
+        "青龙面板",
+        "青龙面板是干什么的",
+        "青龙面板能干什么",
+        "青龙面板官网",
+        "青龙面板中文",
+        "青龙面板视图",
+        "青龙面板 初始化",
+        "青龙面板免费",
+        "青龙面板 脚本大全",
+
+    ];
+
+
+    var index = 0;
+    var count = 0;
+    var tempTime = 0;
+
+    var isPause = false;
+
+    async function keydown() {
+        console.log("你按下一个键");   //检测到键盘按键时调用
+        key = event.keyCode;
+        switch (key) {
+            case 37://"按了←键！"
+                console.log("按了←键！");
+                index++;
+                document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'Black '> " + keywords[index] + "</font> ";
+
+                break;
+            case 38://"按了↑键！"
+                console.log("按了↑键！");
+                isPause = !isPause;
+                break;
+            case 39://"按了→键！"
+                console.log("按了→键！");
+                index++;
+                document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'Black '> " + keywords[index] + "</font> ";
+                break;
+            case 40://"按了↓键！"
+                console.log("按了↓键！");
+                isPause = !isPause;
+                break;
+        }
+    }
+
+    function sleep(timeountMS) {
+        return new Promise(resolve => setTimeout(resolve, timeountMS))
+    }
+
+    function openonelink() {
+        window.open(hosts + keywords[index], "_blank");
+        console.log("openonelink keywords=" + keywords[index]);
+        count++;
+    }
+
+    async function mySleepAndUpdateTime(delaytime) {
+        // console.log("mySleepAndUpdateTime:" + delaytime);
+
+        while (delaytime > 0) {
+            delaytime--;
+            await sleep(1000);
+
+            if (isPause) {
+                await Pause();
+            }
+            console.log("延时=" + delaytime);
+            document.getElementById("showtime").innerHTML = "随机等待 = <font color = 'red'>  " + delaytime + " </font> 秒";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+            document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'red'> " + keywords[index] + "</font> ";
+        }
+        openonelink();
+        index++;
+    }
+
+
+    async function Pause() {
+        while (isPause) {
+            await sleep(500);
+        }
+    }
+
+    async function start() {
+        // console.log("开始");
+        while (index < keywords.length) {
+            // console.log("inloop sleep(1000)");
+
+
+            delaytime = parseInt((Math.random() * 500000 + 500000) / 1000);
+            // console.log(" start delaytime" + delaytime);
+            await mySleepAndUpdateTime(delaytime);
+
+        }
+    }
+
+    start();
+
+</script>
+
+
+<style>
+    .center {
+        margin: auto;
+        width: 60%;
+        border: 3px solid #73AD21;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+
+</html>
