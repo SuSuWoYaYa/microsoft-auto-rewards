@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body> 
+<div class="center">
+<p>刷微软积分运行中</p>
+<p id="showtime">倒计时等待</p>
+
+</div>
+</body>
+
+<script>
+
+var links = [
+" https://cn.bing.com/search?q=鼠头鸭脖",
+      " https://cn.bing.com/search?q=胡塞武装截断红海航线",
+      " https://cn.bing.com/search?q=波音飞机事故频出",
+      " https://cn.bing.com/search?q=法国最年轻总理",
+      " https://cn.bing.com/search?q=厄瓜多尔进入“战争状态”",
+      " https://cn.bing.com/search?q=农民抗议浪潮席卷欧洲",
+      " https://cn.bing.com/search?q=丹麦女王退位",
+      " https://cn.bing.com/search?q=朝鲜半岛局势升温",
+      " https://cn.bing.com/search?q=不结盟运动峰会",
+      " https://cn.bing.com/search?q=巴西再工业化",
+      " https://cn.bing.com/search?q=“末日时钟”被拨到距午夜90秒",
+      " https://cn.bing.com/search?q=日本登月探测器着陆",
+      " https://cn.bing.com/search?q=韩国政治刺杀",
+      " https://cn.bing.com/search?q=访乌归来后，布林肯正推动允许乌使用美制武器攻击俄领土",
+      " https://cn.bing.com/search?q=南阳市方城县学校一宿舍发生火灾 13人遇难1人受伤",
+      " https://cn.bing.com/search?q=华为问界M7高速车祸",
+      " https://cn.bing.com/search?q=华为251事件",
+      " https://cn.bing.com/search?q=四无青年",
+      " https://cn.bing.com/search?q=四不青年现象有所抬头",
+      " https://cn.bing.com/search?q=当前我市 四不青年 现象有所抬头",
+      " https://cn.bing.com/search?q=不买房不买车不结婚不生孩子",
+      " https://cn.bing.com/search?q=当前我市四不青年",
+      " https://cn.bing.com/search?q=四无青年指的是什么",
+      " https://cn.bing.com/search?q=不结婚不生娃不买房不消费",
+      " https://cn.bing.com/search?q=不结婚不生孩子不买房",
+      " https://cn.bing.com/search?q=当前我市四不青年现象",
+      " https://cn.bing.com/search?q=楼市下跌",
+      " https://cn.bing.com/search?q=全国房价下跌最新消息",
+      " https://cn.bing.com/search?q=房价为什么下跌这么快最近",
+      " https://cn.bing.com/search?q=中国楼市下跌",
+      " https://cn.bing.com/search?q=房价下跌原因",
+      " https://cn.bing.com/search?q=房价为什么会跌",
+      " https://cn.bing.com/search?q=楼市暴跌",
+      " https://cn.bing.com/search?q=楼市为什么会崩",
+      " https://cn.bing.com/search?q=楼市下跌",
+      " https://cn.bing.com/search?q=躺平",
+      " https://cn.bing.com/search?q=躺平 百科",
+      " https://cn.bing.com/search?q=躺平是什么意思",
+      " https://cn.bing.com/search?q=躺平游戏",
+      " https://cn.bing.com/search?q=躺平即是正义",
+      " https://cn.bing.com/search?q=躺平 英文",
+      " https://cn.bing.com/search?q=躺平一词",
+      " https://cn.bing.com/search?q=躺平公式",
+      " https://cn.bing.com/search?q=躺平",
+      " https://cn.bing.com/search?q=躺平既是正义 原文",
+      " https://cn.bing.com/search?q=躺平即正义原文",
+      " https://cn.bing.com/search?q=躺平即是正义原帖",
+      " https://cn.bing.com/search?q=躺平即是正义 好心的旅行家",
+      " https://cn.bing.com/search?q=躺平即是正义2021",
+      " https://cn.bing.com/search?q=躺平即是正义pdf",
+      " https://cn.bing.com/search?q=躺平即是正义 全文",
+      " https://cn.bing.com/search?q=穷fire组",
+      " https://cn.bing.com/search?q=躺平fire",
+      " https://cn.bing.com/search?q=咖啡师fire",
+      " https://cn.bing.com/search?q=穷fire是什么意思",
+      " https://cn.bing.com/search?q=fire生活穷版",
+      " https://cn.bing.com/search?q=fire生活穷版小组",
+      " https://cn.bing.com/search?q=躺平fire是什么意思",
+      " https://cn.bing.com/search?q=fire计算器",
+      " https://cn.bing.com/search?q=耻辱wiki",
+      " https://cn.bing.com/search?q=耻辱",
+      " https://cn.bing.com/search?q=dishonored游戏",
+      " https://cn.bing.com/search?q=dishonored漫画",
+      " https://cn.bing.com/search?q=dishonored中文",
+      " https://cn.bing.com/search?q=dishonored百科",
+      " https://cn.bing.com/search?q=dishonored中文补丁",
+      " https://cn.bing.com/search?q=冤罪杀机",
+      " https://cn.bing.com/search?q=青龙面板",
+      " https://cn.bing.com/search?q=青龙面板是干什么的",
+      " https://cn.bing.com/search?q=青龙面板能干什么",
+      " https://cn.bing.com/search?q=青龙面板官网",
+      " https://cn.bing.com/search?q=青龙面板中文",
+      " https://cn.bing.com/search?q=青龙面板视图",
+      " https://cn.bing.com/search?q=青龙面板 初始化",
+      " https://cn.bing.com/search?q=青龙面板免费",
+      " https://cn.bing.com/search?q=青龙面板 脚本大全",
+];
+
+
+ 
+//setInterval方法或字符串 ，毫秒，参数数组（方法的）)
+ 
+<!-- var index  = 0; -->
+<!-- var stop = setInterval("openlinks()", Math.random()*100000);//showLogin()函数名一定要带括号 -->
+ 
+<!-- function openlinks() -->
+<!-- { -->
+	<!-- if(index >= links.length){ -->
+		<!-- clearInterval(stop); -->
+		<!-- console.log("stop"); -->
+	<!-- }else{ -->
+		<!-- window.open(links[index],"_blank"); -->
+		<!-- console.log(links[index]); -->
+	<!-- } -->
+	<!-- index +=1; -->
+<!-- } -->
+
+var index  = 0;
+var timeArray = [];
+var alltime = 0;
+var tempTime = 0;
+
+for(i = 0; i < links.length; i++){
+	tempTime =  parseInt((Math.random()*500000 + 500000)/1000);
+	
+	timeArray[i] = tempTime;
+	alltime += tempTime;
+	
+	setTimeout("openonelink()", alltime*1000 )
+	
+	//console.log("settime " + i + " = " + tempTime);
+}
+
+function openonelink(){
+	window.open(links[index],"_blank");
+	index +=1;
+	console.log("next time = " + timeArray[index]);
+	document.getElementById("showtime").innerHTML = "随机等待 "  + (timeArray[index])+"秒";
+
+}
+
+
+console.log("first wait = " + timeArray[0]);
+document.getElementById("showtime").innerHTML = "随机等待 = " + (timeArray[0])+"秒";
+console.log("start");
+
+
+</script>
+
+
+<style>
+.center {
+  margin: auto;
+  width: 60%;
+  border: 3px solid #73AD21;
+  padding: 10px;
+  text-align: center;
+}
+</style>
+
+</html> 
