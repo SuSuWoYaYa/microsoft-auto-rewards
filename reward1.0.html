@@ -11,7 +11,7 @@
         <h3>
             <p>刷微软积分搜索运行中 </p>
             </h1>
-        
+         <p><i>注意：禁用锁屏，锁屏后浏览器不执行js。</i></p>
             <p id="index">开始</p>
             <p color="dakgray"><i>按<font color='darkviolet  '>上下键</font> 开始/暂停，按<font color='darkviolet  '>← →键</font>
                     跳到下一个搜索</i></p>
@@ -143,7 +143,8 @@
     }
 
     function openonelink() {
-        window.open(hosts + keywords[index], "_blank");
+		let ranomKey = " "+parseInt((Math.random() * 500000 + 500000) / 1000);
+        window.open(hosts + keywords[index] + ranomKey, "_blank");
         console.log("openonelink keywords=" + keywords[index]);
         count++;
     }
