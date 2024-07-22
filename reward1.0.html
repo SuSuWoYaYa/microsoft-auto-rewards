@@ -27,6 +27,15 @@
     </div>
 </body>
 
+
+<script id="worker" type="app/worker">
+
+   setInterval(function() {
+        postMessage(0);
+    }, 1000);
+
+ </script>
+
 <script>
 
     var hosts = "https://cn.bing.com/search?q=";
@@ -178,7 +187,7 @@
 
     var index = 0;
     var count = 0;
-    var tempTime = 0;
+    var delaytime = 0;
 
     var isPause = false;
     var isDebug = false;
@@ -200,27 +209,25 @@
         console.log("Debug!");
     }
 
-    function sleep(timeountMS) {
-        return new Promise(resolve => setTimeout(resolve, timeountMS))
-    }
+
 
     function openonelink() {
-        let ranomKey = " " + parseInt((Math.random() * 500000 + 500000) / 1000);
+        let ranomKey = " " + parseInt((Math.random() * 500000 + 500000) / 10000);
         window.open(hosts + keywords[index] + ranomKey, "_blank");
         console.log("打开搜索=" + keywords[index]);
         count++;
     }
 
-    async function mySleepAndUpdateTime(delaytime) {
-        // console.log("mySleepAndUpdateTime:" + delaytime);
 
-        while (delaytime > 0) {
+
+    function updateUi() {
+
+        if (!isPause && index < keywords.length) {
             delaytime--;
-            await sleep(1000);
 
-            if (isPause) {
-                await Pause();
-            }
+            document.getElementById("showtime").innerHTML = "随机等待 = <font color = 'red'>  " + delaytime + " </font> 秒";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+            document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'red'> " + keywords[index] + "</font> ";
 
             if (isDebug) {
                 //     let timer = new Date()
@@ -228,19 +235,13 @@
                 console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
             }
 
-            document.getElementById("showtime").innerHTML = "随机等待 = <font color = 'red'>  " + delaytime + " </font> 秒";
-            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
-            document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'red'> " + keywords[index] + "</font> ";
+            if (delaytime == 0) {
+                openonelink();
+                index++;
+                delaytime = parseInt((Math.random() * 500000 + 500000) / 1000);
+            }
         }
-        openonelink();
-        index++;
-    }
 
-
-    async function Pause() {
-        while (isPause) {
-            await sleep(500);
-        }
     }
 
     async function start() {
@@ -248,20 +249,32 @@
         document.getElementById("pause").onclick = onPause;
         document.getElementById("nextlink").onclick = onNextLink;
         document.getElementById("debug").onclick = onDebug;
-        while (index < keywords.length) {
-            // console.log("inloop sleep(1000)");
+
+        delaytime = parseInt((Math.random() * 500000 + 500000) / 10000);
+
+        //通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
+        //先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。
+        //https://www.ruanyifeng.com/blog/2018/07/web-worker.html
+        var blob = new Blob([document.querySelector('#worker').textContent]);
+        var url = window.URL.createObjectURL(blob);
+        var myWorker = new Worker(url);
+
+        myWorker.onmessage = function (e) {
+            // e.data === 'some message'
+            //console.log('Received message ' + event.data);
+            updateUi();
+        };
 
 
-            delaytime = parseInt((Math.random() * 500000 + 500000) / 1000);
-            // console.log(" start delaytime" + delaytime);
-            await mySleepAndUpdateTime(delaytime);
-
-        }
     }
 
     start();
 
+
+
 </script>
+
+
 
 
 <style>
