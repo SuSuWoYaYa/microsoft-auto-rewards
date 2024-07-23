@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>刷积分搜索 1.0</title>
+</head>
+
+<body>
+    <div class="center">
+        <h3>
+            <p>刷微软积分搜索运行中 </p>
+            </h1>
+            <p><i>注意：禁用锁屏，锁屏后浏览器可能不执行js。</i></p>
+            <p id="index">开始</p>
+            <p color="dakgray"><i>
+                    <span id="pause" style="cursor: pointer;color:darkviolet">点我</span>
+                    开始/暂停，
+                    <span id="nextlink" style="cursor: pointer;color:darkviolet">点我</span>
+                    跳过当前搜索，
+                    <span id="halfTime" style="cursor: pointer;color:darkviolet">点我</span>
+                    时间减半，
+                    <span id="debug" style="cursor: pointer;color:darkviolet">点我</span>
+                    输出ConsoleLog
+                </i></p>
+            <p id="showtime">倒计时等待</p>
+
+            <p id="showKeyword">即将搜索</p>
+    </div>
+</body>
+
+
+<script id="worker" type="app/worker">
+
+   setInterval(function() {
+        postMessage(0);
+    }, 1000);
+
+ </script>
+
+<script>
+
+    var hosts = "https://cn.bing.com/search?q=";
+
+    //可能是浏览器指纹
+    var extend = "&PC=OPALIOS&form=LWS001&ssp=1&cc=CN&setlang=zh-hans&ensearch=1&safesearch=moderate";
+    var keywords = [
+        "鼠头鸭脖",
+        "共残党",
+        "共惨党",
+        "共匪",
+        "赤匪",
+        "裆中央",
+        "朝鲜劳动党",
+        "中宣、真理部",
+        "上海帮",
+        "团派",
+        "九常委、九长老",
+        "政治局常委内幕",
+        "朝鲜内幕",
+        "朝鲜真相",
+        "蒋介石",
+        "蒋经国",
+        "袁世凯",
+        "平反64",
+        "六月四日",
+        "民国78年",
+        "中华民国",
+        "西藏流亡政府",
+        "青天白日旗",
+        "民进党",
+        "洪哲胜",
+        "独立台湾会",
+        "中华台北",
+        "台湾政论区",
+        "台湾自由联盟",
+        "美国之音",
+        "自由亚洲电台",
+        "记者无疆界",
+        "一党专政",
+        "一党独裁",
+        "新闻封锁",
+        "freedom",
+        "freechina",
+        "维权人士",
+        "维权律师",
+        "防火长城",
+        "great firewall",
+        "国家防火墙 滨兴",
+        "毒疫苗 长生生物",
+        "润学",
+        "2024年金门近海快艇翻覆事故",
+        "2024年厦金海域常态化执法巡查行动",
+        "反对逃犯条例修订草案运动后续事件",
+        "香港《基本法》第23条立法",
+        "歌曲《愿荣光归香港》禁制令生效",
+        "墨西哥驻厄瓜多尔大使馆遇袭事件",
+        "英国国会通过卢旺达法案",
+        "2024年玻利维亚未遂政变",
+        "2024年立法院改革争议",
+        "519草根决心行动",
+        "“民主倒退，公民抢救”521行动",
+        "2024年武装犯罪事件",
+        "2024年厄瓜多尔冲突",
+        "2024年海地冲突",
+        "2024年莫斯科番红花城市大厅恐怖袭击",
+        "2024年重大命案：",
+        "李在明遇刺事件",
+        "克尔曼爆炸事件",
+        "塞瓦斯蒂安·皮涅拉之死和国葬",
+        "阿列克谢·纳瓦尔尼之死",
+        "邯郸初中生杀人埋尸案",
+        "胡塞武装截断红海航线",
+        "波音飞机事故频出",
+        "法国最年轻总理",
+        "厄瓜多尔进入“战争状态”",
+        "农民抗议浪潮席卷欧洲",
+        "丹麦女王退位",
+        "朝鲜半岛局势升温",
+        "不结盟运动峰会",
+        "巴西再工业化",
+        "“末日时钟”被拨到距午夜90秒",
+        "日本登月探测器着陆",
+        "韩国政治刺杀",
+        "访乌归来后，布林肯正推动允许乌使用美制武器攻击俄领土",
+        "南阳市方城县学校一宿舍发生火灾 13人遇难1人受伤",
+        "华为问界M7高速车祸",
+        "华为251事件",
+        "四无青年",
+        "四不青年现象有所抬头",
+        "当前我市 四不青年 现象有所抬头",
+        "不买房不买车不结婚不生孩子",
+        "当前我市四不青年",
+        "四无青年指的是什么",
+        "不结婚不生娃不买房不消费",
+        "不结婚不生孩子不买房",
+        "当前我市四不青年现象",
+        "楼市下跌",
+        "全国房价下跌最新消息",
+        "房价为什么下跌这么快最近",
+        "中国楼市下跌",
+        "房价下跌原因",
+        "房价为什么会跌",
+        "楼市暴跌",
+        "楼市为什么会崩",
+        "楼市下跌",
+        "躺平",
+        "躺平 百科",
+        "躺平是什么意思",
+        "躺平游戏",
+        "躺平即是正义",
+        "躺平 英文",
+        "躺平一词",
+        "躺平公式",
+        "躺平",
+        "躺平既是正义 原文",
+        "躺平即正义原文",
+        "躺平即是正义原帖",
+        "躺平即是正义 好心的旅行家",
+        "躺平即是正义2021",
+        "躺平即是正义pdf",
+        "躺平即是正义 全文",
+        "穷fire组",
+        "躺平fire",
+        "咖啡师fire",
+        "穷fire是什么意思",
+        "fire生活穷版",
+        "fire生活穷版小组",
+        "躺平fire是什么意思",
+        "fire计算器",
+        "耻辱wiki",
+        "耻辱",
+        "dishonored游戏",
+        "dishonored漫画",
+        "dishonored中文",
+        "dishonored百科",
+        "dishonored中文补丁",
+        "冤罪杀机",
+        "青龙面板",
+        "青龙面板是干什么的",
+        "青龙面板能干什么",
+        "青龙面板官网",
+        "青龙面板中文",
+        "青龙面板视图",
+        "青龙面板 初始化",
+        "青龙面板免费",
+        "青龙面板 脚本大全",
+
+    ];
+
+
+    var index = 0;
+    var count = 0;
+    var delaytime = 0;
+
+    var isPause = false;
+    var isDebug = false;
+
+    function onPause() {
+        isPause = !isPause;
+        if (isDebug) {console.log("暂停/开始");}
+    }
+
+    function onNextLink() {
+        index++;
+        document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'Black '> " + keywords[index] + "</font> ";
+        if (isDebug) {console.log("下一个搜索=" + keywords[index]);}
+    }
+
+    function onDebug() {
+        isDebug = !isDebug;
+        console.log("Debug!");
+    }
+
+    function onHalfTime() {
+        delaytime = parseInt(delaytime /= 2);
+        console.log("时间减半!");
+    }
+
+
+    function openonelink() {
+        let ranomKey = " " + new Date().toLocaleString();
+        window.open(hosts + keywords[index] + ranomKey + extend, "_blank");
+        console.log("打开搜索=" + keywords[index] + ", " + new Date().toLocaleString());
+        count++;
+    }
+
+
+    function isNewDay() {
+        let date = new Date();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+
+        if (hour == 0 && minute == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function updateUi() {
+
+        if (!isPause && index < keywords.length) {
+            delaytime--;
+
+            document.getElementById("showtime").innerHTML = "随机等待 = <font color = 'red'>  " + delaytime + " </font> 秒";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+            document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'red'> " + keywords[index] + "</font> ";
+
+            if (isDebug) {
+                //     let timer = new Date()
+                // console.log(timer.toLocaleString()) // 日期+时间 2023/5/28 23:07:35
+                console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
+            }
+
+            if (delaytime == 0 || delaytime < 0) {
+                openonelink();
+                index++;
+                delaytime = parseInt((Math.random() * 50000 + 50000) / 1000);
+            }
+        }
+
+        if (isNewDay() || index == keywords.length) {
+            index = 0;
+        }
+
+    }
+
+    async function start() {
+        // console.log("开始");
+        document.getElementById("pause").onclick = onPause;
+        document.getElementById("nextlink").onclick = onNextLink;
+        document.getElementById("halfTime").onclick = onHalfTime;
+        document.getElementById("debug").onclick = onDebug;
+
+        delaytime = parseInt((Math.random() * 50000 + 50000) / 1000);
+
+        //通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
+        //先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。
+        //https://www.ruanyifeng.com/blog/2018/07/web-worker.html
+        var blob = new Blob([document.querySelector('#worker').textContent]);
+        var url = window.URL.createObjectURL(blob);
+        var myWorker = new Worker(url);
+
+        myWorker.onmessage = function (e) {
+            // e.data === 'some message'
+            //console.log('Received message ' + event.data);
+            updateUi();
+        };
+
+
+    }
+
+    start();
+
+
+
+</script>
+
+
+
+
+<style>
+    .center {
+        margin: auto;
+        width: 60%;
+        border: 3px solid #73AD21;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+
+</html>
