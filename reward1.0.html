@@ -201,6 +201,7 @@
     var isDebug = false;
     var isSearchRandomDate = true;
 
+    //随机范围内的整数
     function RandomInt(min, max) {
         return Math.round(Math.random() * (max - min)) + min;
     }
@@ -255,7 +256,7 @@
             randomSearchKey = RandomInt(0, keywords.length);
         }
 
-        //bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
+        //打开 bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
         window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
         console.log("打开搜索=" + keywords[index] + randomSearchKey + ", " + new Date().toLocaleString());
         count++;
@@ -292,15 +293,22 @@
 
             if (delaytime == 0 || delaytime < 0) {
                 openonelink();
-                onNextIndex()
-                delaytime = RandomInt(250, 350);
-
-
+                onNextIndex();
+                //随机延时
+                delaytime = RandomInt(5, 100);
             }
         }
 
+        //重置索引
         if (isNewDay() || index >= keywords.length) {
             index = 0;
+        }
+
+        //30次后暂停
+        if (count >= 30) {
+            isPause = true;
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索30次, 已停止</font>";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
         }
 
     }
@@ -312,19 +320,23 @@
         document.getElementById("halfTime").onclick = onHalfTime;
         document.getElementById("debug").onclick = onDebug;
 
-        delaytime = RandomInt(250, 350);
+        delaytime = RandomInt(5, 100);
+        onNextIndex();
+
 
 
         //通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
         //先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。
         //https://www.ruanyifeng.com/blog/2018/07/web-worker.html
+
+        //加载页面内定时器消息脚本
         var blob = new Blob([document.querySelector('#worker').textContent]);
         var url = window.URL.createObjectURL(blob);
         var myWorker = new Worker(url);
 
         myWorker.onmessage = function (e) {
             // e.data === 'some message'
-            //console.log('Received message ' + event.data);
+            //接收到每秒消息后更新动作
             updateUi();
         };
 
@@ -347,6 +359,7 @@
         border: 3px solid #73AD21;
         padding: 10px;
         text-align: center;
+        font-size: 18px;
     }
 </style>
 
