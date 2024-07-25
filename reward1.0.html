@@ -13,6 +13,10 @@
             </h1>
             <p><i>注意：禁用锁屏，锁屏后浏览器可能不执行js。</i></p>
             <p id="index">开始</p>
+            <p><input id="inputBaseDelayTime" type="number" onchange="changeBaseDelayTime()"
+                    placeholder="搜索间隔时间,默认40秒" />
+                <label>秒</label>
+            </p>
             <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" checked />
             <label for="randomDate">添加当前时间</label>
 
@@ -195,7 +199,12 @@
 
     var index = 0;
     var count = 0;
+
+    //基础间隔时间
+    var baseDelayTime = 40;
+    //本次间隔时间
     var delaytime = 0;
+
 
     var isPause = false;
     var isDebug = false;
@@ -203,6 +212,7 @@
 
     //随机范围内的整数
     function RandomInt(min, max) {
+        //console.log("RandomInt min=" + min + ",max=" + max);
         return Math.round(Math.random() * (max - min)) + min;
     }
 
@@ -245,6 +255,12 @@
     function changeSearchRandomString() {
         isSearchRandomDate = !isSearchRandomDate;
         console.log("随机日期/数字搜索");
+    }
+
+    function changeBaseDelayTime() {
+        inputBaseDelayTime = document.getElementById("inputBaseDelayTime");
+        baseDelayTime = parseInt(inputBaseDelayTime.value);
+        console.log("设置间隔时间" + baseDelayTime);
     }
 
     function openonelink() {
@@ -291,11 +307,12 @@
                 console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
             }
 
-            if (delaytime == 0 || delaytime < 0) {
+            if (delaytime <= 0) {
                 openonelink();
                 onNextIndex();
                 //随机延时
-                delaytime = RandomInt(5, 100);
+                delaytime = RandomInt(baseDelayTime, baseDelayTime + 30);
+                //console.log("updateUi delaytime=" + delaytime);
             }
         }
 
@@ -320,7 +337,7 @@
         document.getElementById("halfTime").onclick = onHalfTime;
         document.getElementById("debug").onclick = onDebug;
 
-        delaytime = RandomInt(5, 100);
+        delaytime = RandomInt(baseDelayTime, baseDelayTime + 30);
         onNextIndex();
 
 
