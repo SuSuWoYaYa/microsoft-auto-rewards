@@ -13,11 +13,11 @@
             </h1>
             <p><i>注意：禁用锁屏，锁屏后浏览器可能不执行js。</i></p>
             <p id="index">开始</p>
-            <input type="radio" onclick="changeSearchOrder()" name="searchOrder" value="random" checked />
-            <label for="random">随机选择搜索</label>
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" checked />
+            <label for="randomDate">添加当前时间</label>
 
-            <input type="radio" onclick="changeSearchOrder()" name="searchOrder" value="noRandom" />
-            <label for="noRandom">顺序选择搜索</label>
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" />
+            <label for="randomNumber">添加随机数字</label>
             <p color="dakgray">
                 <i>
                     <span id="pause" style="cursor: pointer;color:darkviolet">点我</span>
@@ -57,6 +57,16 @@
     var extend = "&cvid=ffe831a4aeaa448391439a7d690ca609&aqs=edge.2.69i64l4j69i64i450l4...4.11534j0j9&FORM=ANAB01&PC=U531";
     var keywords = [
         "鼠头鸭脖",
+        "胡耀邦",
+        "习包子",
+        "天安门屠杀",
+        "1989年春夏之交",
+        "天安门事件",
+        "达赖",
+        "学潮",
+        "薄熙来",
+        "六四学潮",
+        "大跃进",
         "共残党",
         "共惨党",
         "共匪",
@@ -179,6 +189,7 @@
         "躺平fire是什么意思",
         "fire计算器",
 
+
     ];
 
 
@@ -188,7 +199,7 @@
 
     var isPause = false;
     var isDebug = false;
-    var isRandomSearch = true;
+    var isSearchRandomDate = true;
 
     function RandomInt(min, max) {
         return Math.round(Math.random() * (max - min)) + min;
@@ -212,11 +223,13 @@
     }
 
     function onNextIndex() {
-        if (isRandomSearch) {
-            index = RandomInt(0, keywords.length);
-        } else {
-            index++;
-        }
+        index = RandomInt(0, keywords.length);
+
+        // if (isRandomSearch) {
+        //     index = RandomInt(0, keywords.length);
+        // } else {
+        //     index++;
+        // }
     }
     function onDebug() {
         isDebug = !isDebug;
@@ -228,15 +241,23 @@
         console.log("时间减半!");
     }
 
-    function changeSearchOrder() {
-        isRandomSearch = !isRandomSearch;
-        console.log("随机搜索开关");
+    function changeSearchRandomString() {
+        isSearchRandomDate = !isSearchRandomDate;
+        console.log("随机日期/数字搜索");
     }
 
     function openonelink() {
-        let ranomKey = " " + new Date().toLocaleString();
-        window.open(hosts + keywords[index] + ranomKey + extend, "_blank");
-        console.log("打开搜索=" + keywords[index] + ", " + new Date().toLocaleString());
+        //搜索字后添加随机字符
+        let randomSearchKey;
+        if (isSearchRandomDate) {
+            randomSearchKey = " " + new Date().toLocaleString();
+        } else {
+            randomSearchKey = RandomInt(0, keywords.length);
+        }
+
+        //bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
+        window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
+        console.log("打开搜索=" + keywords[index] + randomSearchKey + ", " + new Date().toLocaleString());
         count++;
     }
 
@@ -278,7 +299,7 @@
             }
         }
 
-        if (!isRandomSearch || isNewDay() || index >= keywords.length) {
+        if (isNewDay() || index >= keywords.length) {
             index = 0;
         }
 
