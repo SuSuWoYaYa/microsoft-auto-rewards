@@ -3,6 +3,9 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-compatible" content="ie=edge">
     <title>刷积分搜索 1.0</title>
 </head>
 
@@ -11,12 +14,20 @@
         <h3>
             <p>刷微软积分搜索运行中 </p>
             </h1>
-            <p><i>注意：禁用锁屏，锁屏后浏览器可能不执行js。</i></p>
+            <p><i>用edge移动版打开,允许弹窗</i></p>
             <p id="index">开始</p>
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" checked />
+            <label for="randomDate">添加当前时间</label>
+
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" />
+            <label for="randomNumber">添加随机数字</label>
             <p color="dakgray">
                 <i>
                     <span id="pause" style="cursor: pointer;color:darkviolet">点我</span>
-                    开始/暂停，
+                    开始/暂停，</i>
+            </p>
+            <p color="dakgray">
+                <i>
                     <span id="nextlink" style="cursor: pointer;color:darkviolet">点我</span>
                     跳过当前搜索，
                 </i>
@@ -24,7 +35,10 @@
             <p color="dakgray">
                 <i>
                     <span id="halfTime" style="cursor: pointer;color:darkviolet">点我</span>
-                    时间减半，
+                    时间减半，</i>
+            </p>
+            <p color="dakgray">
+                <i>
                     <span id="debug" style="cursor: pointer;color:darkviolet">点我</span>
                     输出ConsoleLog
                 </i>
@@ -52,6 +66,16 @@
     var extend = "&PC=OPALIOS&form=LWS001&ssp=1&cc=CN&setlang=zh-hans&ensearch=1&safesearch=moderate";
     var keywords = [
         "鼠头鸭脖",
+        "胡耀邦",
+        "习包子",
+        "天安门屠杀",
+        "1989年春夏之交",
+        "天安门事件",
+        "达赖",
+        "学潮",
+        "薄熙来",
+        "六四学潮",
+        "大跃进",
         "共残党",
         "共惨党",
         "共匪",
@@ -163,7 +187,6 @@
         "躺平即正义原文",
         "躺平即是正义原帖",
         "躺平即是正义 好心的旅行家",
-        "躺平即是正义2021",
         "躺平即是正义pdf",
         "躺平即是正义 全文",
         "穷fire组",
@@ -174,23 +197,6 @@
         "fire生活穷版小组",
         "躺平fire是什么意思",
         "fire计算器",
-        "耻辱wiki",
-        "耻辱",
-        "dishonored游戏",
-        "dishonored漫画",
-        "dishonored中文",
-        "dishonored百科",
-        "dishonored中文补丁",
-        "冤罪杀机",
-        "青龙面板",
-        "青龙面板是干什么的",
-        "青龙面板能干什么",
-        "青龙面板官网",
-        "青龙面板中文",
-        "青龙面板视图",
-        "青龙面板 初始化",
-        "青龙面板免费",
-        "青龙面板 脚本大全",
 
     ];
 
@@ -201,16 +207,39 @@
 
     var isPause = false;
     var isDebug = false;
+    var isSearchRandomDate = true;
+
+    function RandomInt(min, max) {
+        return Math.round(Math.random() * (max - min)) + min;
+    }
+
 
     function onPause() {
         isPause = !isPause;
-        if (isDebug) {console.log("暂停/开始");}
+
+        if (isPause) {
+            console.log("暂停");
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>已暂停</font>";
+        } else {
+            console.log("开始");
+        }
     }
 
     function onNextLink() {
-        index++;
+        onNextIndex();
         document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'Black '> " + keywords[index] + "</font> ";
         if (isDebug) {console.log("下一个搜索=" + keywords[index]);}
+    }
+
+
+    function onNextIndex() {
+        index = RandomInt(0, keywords.length);
+
+        // if (isRandomSearch) {
+        //     index = RandomInt(0, keywords.length);
+        // } else {
+        //     index++;
+        // }
     }
 
     function onDebug() {
@@ -223,14 +252,25 @@
         console.log("时间减半!");
     }
 
-
-    function openonelink() {
-        let ranomKey = " " + new Date().toLocaleString();
-        window.open(hosts + keywords[index] + ranomKey + extend, "_blank");
-        console.log("打开搜索=" + keywords[index] + ", " + new Date().toLocaleString());
-        count++;
+    function changeSearchRandomString() {
+        isSearchRandomDate = !isSearchRandomDate;
+        console.log("随机日期/数字搜索");
     }
 
+    function openonelink() {
+        //搜索字后添加随机字符
+        let randomSearchKey;
+        if (isSearchRandomDate) {
+            randomSearchKey = " " + new Date().toLocaleString();
+        } else {
+            randomSearchKey = RandomInt(0, keywords.length);
+        }
+
+        //bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
+        window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
+        console.log("打开搜索=" + keywords[index] + randomSearchKey + ", " + new Date().toLocaleString());
+        count++;
+    }
 
     function isNewDay() {
         let date = new Date();
@@ -260,15 +300,21 @@
                 console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
             }
 
+
             if (delaytime == 0 || delaytime < 0) {
                 openonelink();
-                index++;
-                delaytime = parseInt((Math.random() * 50000 + 50000) / 1000);
+                onNextIndex()
+                delaytime = RandomInt(5, 15);
             }
         }
 
-        if (isNewDay() || index == keywords.length) {
+        if (isNewDay() || index >= keywords.length) {
             index = 0;
+        }
+
+        if (count >= 20) {
+            isPause = true;
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>手机版搜索20次, 已暂停</font>";
         }
 
     }
@@ -280,7 +326,8 @@
         document.getElementById("halfTime").onclick = onHalfTime;
         document.getElementById("debug").onclick = onDebug;
 
-        delaytime = parseInt((Math.random() * 50000 + 50000) / 1000);
+        delaytime = RandomInt(5, 15);
+        onNextIndex()
 
         //通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
         //先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。
@@ -310,10 +357,11 @@
 <style>
     .center {
         margin: auto;
-        width: 60%;
+        width: 80%;
         border: 3px solid #73AD21;
         padding: 10px;
         text-align: center;
+        font-size: 16px;
     }
 </style>
 
