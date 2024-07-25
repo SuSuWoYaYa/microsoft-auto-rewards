@@ -312,9 +312,11 @@
             index = 0;
         }
 
+        //20次后停止
         if (count >= 20) {
             isPause = true;
-            document.getElementById("showtime").innerHTML = " <font color = 'red'>手机版搜索20次, 已暂停</font>";
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索20次, 已停止</font>";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
         }
 
     }
