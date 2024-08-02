@@ -3,13 +3,13 @@
 
 <head>
     <meta charset="utf-8">
-    <title>刷积分搜索 1.0</title>
+    <title>刷积分搜索 v1.1</title>
 </head>
 
 <body>
     <div class="center">
         <h3>
-            <p>刷微软积分搜索运行中 </p>
+            <p>刷微软积分搜索运行中 v1.1</p>
             </h1>
             <p><i>注意：允许弹窗,禁用锁屏,锁屏后浏览器可能不执行js。</i></p>
             <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
@@ -211,12 +211,19 @@
     var baseDelayTime = 40;
     //本次间隔时间
     var delaytime = 0;
+    //本次窗口打开时间
+    var openLinkTime = 0;
+    //窗口打开后关闭时间
+    var maxOpenLinkTime = 5;
     // 搜索停止次数
     var maxCount = 35;
 
     var isPause = false;
     var isDebug = false;
     var isSearchRandomDate = true;
+
+    //新打开的窗口句柄
+    var new_window_handle = null;
 
     //随机范围内的整数
     function RandomInt(min, max) {
@@ -281,9 +288,21 @@
         }
 
         //打开 bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
-        window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
+        //保存窗口句柄
+        new_window_handle = window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
         console.log("打开搜索=" + keywords[index] + randomSearchKey + ", " + new Date().toLocaleString());
         count++;
+    }
+
+    //关闭窗口
+    function closeOpenedLink() {
+        if (new_window_handle != null) {
+            new_window_handle.close();
+        }
+
+        if (isDebug) {
+            console.log("关闭上一个窗口");
+        }
     }
 
 
@@ -302,6 +321,7 @@
 
     function updateUi() {
 
+
         if (!isPause && index < keywords.length) {
             delaytime--;
 
@@ -315,18 +335,31 @@
                 console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
             }
 
+            //倒计时结束打开窗口
             if (delaytime <= 0) {
+                //重置关闭倒计时
+                openLinkTime = 0
                 openonelink();
                 onNextIndex();
                 //随机延时
                 delaytime = RandomInt(baseDelayTime, baseDelayTime + 30);
                 //console.log("updateUi delaytime=" + delaytime);
             }
+
+
         }
 
-        //重置索引
+        openLinkTime++;
+        // 倒计时n秒关闭已打开窗口
+        if (openLinkTime >= maxOpenLinkTime) {
+            closeOpenedLink();
+        }
+
+        //每天0点重置
         if (isNewDay() || index >= keywords.length) {
             index = 0;
+            count = 0;
+            isPause = false;
         }
 
         //N次后停止
@@ -335,7 +368,6 @@
             document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索" + maxCount + "次, 已停止</font>";
             document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
         }
-
     }
 
     async function start() {
