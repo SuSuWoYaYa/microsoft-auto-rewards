@@ -11,8 +11,9 @@
         <h3>
             <p>刷微软积分搜索运行中 </p>
             </h1>
-            <p><i>注意：禁用锁屏，锁屏后浏览器可能不执行js。</i></p>
-            <p id="index">开始</p>
+            <p><i>注意：允许弹窗,禁用锁屏,锁屏后浏览器可能不执行js。</i></p>
+            <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
+
             <p><input id="inputBaseDelayTime" type="number" onchange="changeBaseDelayTime()"
                     placeholder="搜索间隔时间,默认40秒" />
                 <label>秒</label>
@@ -58,7 +59,13 @@
     var hosts = "https://cn.bing.com/search?q=";
 
     //可能是浏览器指纹
+    //请自己修改该处为你电脑的浏览器指纹，用你自己的浏览器搜索的结果网址获取
+    //举例，下面搜索关键字积分后面的所有东西就是我们要的东西
+    //https://cn.bing.com/search?q=积分&cvid=8c50072b399147d49aa6772b9869c9ef&aqs=edge.0.69i59j0j69i59j0l6.803j0j1&pglt=171&FORM=ANSPA1&PC=ESBXSP
     var extend = "&cvid=ffe831a4aeaa448391439a7d690ca609&aqs=edge.2.69i64l4j69i64i450l4...4.11534j0j9&FORM=ANAB01&PC=U531";
+
+
+    //搜索关键字
     var keywords = [
         "鼠头鸭脖",
         "胡耀邦",
@@ -204,7 +211,8 @@
     var baseDelayTime = 40;
     //本次间隔时间
     var delaytime = 0;
-
+    // 搜索停止次数
+    var maxCount = 35;
 
     var isPause = false;
     var isDebug = false;
@@ -321,10 +329,10 @@
             index = 0;
         }
 
-        //30次后暂停
-        if (count >= 30) {
+        //N次后停止
+        if (count >= maxCount) {
             isPause = true;
-            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索30次, 已停止</font>";
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索" + maxCount + "次, 已停止</font>";
             document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
         }
 
@@ -332,6 +340,7 @@
 
     async function start() {
         // console.log("开始");
+        document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
         document.getElementById("pause").onclick = onPause;
         document.getElementById("nextlink").onclick = onNextLink;
         document.getElementById("halfTime").onclick = onHalfTime;
@@ -376,7 +385,7 @@
         border: 3px solid #73AD21;
         padding: 10px;
         text-align: center;
-        font-size: 18px;
+        font-size: 16px;
     }
 </style>
 
