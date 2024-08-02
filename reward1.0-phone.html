@@ -6,13 +6,13 @@
     <meta name="viewport"
         content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-compatible" content="ie=edge">
-    <title>刷积分搜索 1.0</title>
+    <title>手机刷积分搜索 v1.1</title>
 </head>
 
 <body>
     <div class="center">
         <h3>
-            <p>刷微软积分搜索运行中 </p>
+            <p>刷微软积分搜索运行中 v1.1 </p>
             </h1>
             <p><i>用edge移动版打开,允许弹窗</i></p>
             <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
@@ -214,12 +214,21 @@
     var count = 0;
     //本次间隔时间
     var delaytime = 0;
+    //本次窗口打开时间
+    var openLinkTime = 0;
+    //窗口打开后关闭时间
+    var maxOpenLinkTime = 5;
     // 搜索停止次数
     var maxCount = 25;
 
     var isPause = false;
     var isDebug = false;
     var isSearchRandomDate = true;
+
+
+    //新打开的窗口句柄
+    var new_window_handle = null;
+
 
     function RandomInt(min, max) {
         return Math.round(Math.random() * (max - min)) + min;
@@ -279,9 +288,22 @@
         }
 
         //bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
-        window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
+        //保存窗口句柄
+        new_window_handle = window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
         console.log("打开搜索=" + keywords[index] + randomSearchKey + ", " + new Date().toLocaleString());
         count++;
+    }
+
+    //关闭窗口
+    function closeOpenedLink() {
+        if (new_window_handle != null) {
+            new_window_handle.close();
+
+        }
+
+        if (isDebug) {
+            console.log("关闭上一个窗口");
+        }
     }
 
     function isNewDay() {
@@ -312,16 +334,28 @@
                 console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
             }
 
-
-            if (delaytime == 0 || delaytime < 0) {
+            //倒计时结束打开窗口
+            if (delaytime <= 0) {
+                //重置关闭倒计时
+                openLinkTime = 0
                 openonelink();
                 onNextIndex()
+                //随机延时
                 delaytime = RandomInt(5, 15);
             }
         }
 
+        openLinkTime++;
+        // 倒计时n秒关闭已打开窗口
+        if (openLinkTime >= maxOpenLinkTime) {
+            closeOpenedLink();
+        }
+
+        //每天0点重置
         if (isNewDay() || index >= keywords.length) {
             index = 0;
+            count = 0;
+            isPause = false;
         }
 
         //N次后停止
