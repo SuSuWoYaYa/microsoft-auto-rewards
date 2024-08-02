@@ -15,7 +15,7 @@
             <p>刷微软积分搜索运行中 </p>
             </h1>
             <p><i>用edge移动版打开,允许弹窗</i></p>
-            <p id="index">开始</p>
+            <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
             <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" checked />
             <label for="randomDate">添加当前时间</label>
 
@@ -63,7 +63,16 @@
     var hosts = "https://cn.bing.com/search?q=";
 
     //可能是浏览器指纹
+    //手机版可以用分享链接的方式获取网页连接
+    //请自己修改该处为你电脑的浏览器指纹，用你自己的浏览器搜索的结果网址获取
+    //举例，下面搜索关键字积分后面的所有东西就是我们要的东西
+    //https://cn.bing.com/search?q=积分&cvid=8c50072b399147d49aa6772b9869c9ef&aqs=edge.0.69i59j0j69i59j0l6.803j0j1&pglt=171&FORM=ANSPA1&PC=ESBXSP
+
     var extend = "&PC=OPALIOS&form=LWS001&ssp=1&cc=CN&setlang=zh-hans&ensearch=1&safesearch=moderate";
+
+
+
+    //搜索关键字
     var keywords = [
         "鼠头鸭脖",
         "胡耀邦",
@@ -129,12 +138,12 @@
         "2024年玻利维亚未遂政变",
         "2024年立法院改革争议",
         "519草根决心行动",
-        "“民主倒退，公民抢救”521行动",
+        "“民主倒退 公民抢救”521行动",
         "2024年武装犯罪事件",
         "2024年厄瓜多尔冲突",
         "2024年海地冲突",
         "2024年莫斯科番红花城市大厅恐怖袭击",
-        "2024年重大命案：",
+        "2024年重大命案",
         "李在明遇刺事件",
         "克尔曼爆炸事件",
         "塞瓦斯蒂安·皮涅拉之死和国葬",
@@ -203,7 +212,10 @@
 
     var index = 0;
     var count = 0;
+    //本次间隔时间
     var delaytime = 0;
+    // 搜索停止次数
+    var maxCount = 25;
 
     var isPause = false;
     var isDebug = false;
@@ -312,10 +324,10 @@
             index = 0;
         }
 
-        //20次后停止
-        if (count >= 20) {
+        //N次后停止
+        if (count >= maxCount) {
             isPause = true;
-            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索20次, 已停止</font>";
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索" + maxCount + "次, 已停止</font>";
             document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
         }
 
@@ -323,6 +335,8 @@
 
     async function start() {
         // console.log("开始");
+        document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
         document.getElementById("pause").onclick = onPause;
         document.getElementById("nextlink").onclick = onNextLink;
         document.getElementById("halfTime").onclick = onHalfTime;
