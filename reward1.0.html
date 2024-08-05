@@ -18,10 +18,10 @@
                     placeholder="搜索间隔时间,默认40秒" />
                 <label>秒</label>
             </p>
-            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" checked />
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" />
             <label for="randomDate">添加当前时间</label>
 
-            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" />
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" checked />
             <label for="randomNumber">添加随机数字</label>
             <p color="dakgray">
                 <i>
@@ -214,13 +214,13 @@
     //本次窗口打开时间
     var openLinkTime = 0;
     //窗口打开后关闭时间
-    var maxOpenLinkTime = 5;
+    var maxOpenLinkTime = 7;
     // 搜索停止次数
     var maxCount = 35;
 
     var isPause = false;
     var isDebug = false;
-    var isSearchRandomDate = true;
+    var isSearchRandomDate = false;
 
     //新打开的窗口句柄
     var new_window_handle = null;
@@ -233,6 +233,11 @@
 
     function onPause() {
         isPause = !isPause;
+        if (count >= maxCount) {
+            maxCount += countStep;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+        }
 
         if (isPause) {
             console.log("暂停");
@@ -311,7 +316,7 @@
         let hour = date.getHours();
         let minute = date.getMinutes();
 
-        if (hour == 0 && minute == 0) {
+        if (hour == 8 && minute == 0) {
             return true;
         }
         else {
@@ -355,11 +360,15 @@
             closeOpenedLink();
         }
 
-        //每天0点重置
+        //每天8点重置
         if (isNewDay() || index >= keywords.length) {
             index = 0;
-            count = 0;
+            maxCount += countStep;
             isPause = false;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+            //随机延时几分钟
+            delaytime = RandomInt(500, 1500);
         }
 
         //N次后停止
