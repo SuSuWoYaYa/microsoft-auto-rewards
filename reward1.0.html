@@ -11,6 +11,8 @@
         <h3>
             <p>刷微软积分搜索运行中 v1.1</p>
             </h1>
+            <p id="open_rewards_bing_com" style="cursor: pointer;color:rgb(8, 97, 70)" onclick="openRewardsBingCom()">
+                打开微软积分网站</p>
             <p><i>注意：允许弹窗,禁用锁屏,锁屏后浏览器可能不执行js。</i></p>
             <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
 
@@ -43,8 +45,6 @@
 
             <p id="showKeyword">即将搜索</p>
 
-            <p id="open_rewards_bing_com" style="cursor: pointer;color:rgb(8, 97, 70)" onclick="openRewardsBingCom()">
-                打开微软积分网站</p>
     </div>
 </body>
 
@@ -286,6 +286,13 @@
     function changeBaseDelayTime() {
         inputBaseDelayTime = document.getElementById("inputBaseDelayTime");
         baseDelayTime = parseInt(inputBaseDelayTime.value);
+
+        //防止输入无效
+        if (isNaN(baseDelayTime) || baseDelayTime < 1) {
+            baseDelayTime = 40;
+            document.getElementById("inputBaseDelayTime").value = "";
+        }
+
         console.log("设置间隔时间" + baseDelayTime);
     }
 

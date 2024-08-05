@@ -296,6 +296,14 @@
     function changeBaseDelayTime() {
         inputBaseDelayTime = document.getElementById("inputBaseDelayTime");
         baseDelayTime = parseInt(inputBaseDelayTime.value);
+
+
+        //防止输入无效
+        if (isNaN(baseDelayTime) || baseDelayTime < 1) {
+            baseDelayTime = 10;
+            document.getElementById("inputBaseDelayTime").value = "";
+        }
+
         console.log("设置间隔时间" + baseDelayTime);
     }
 
@@ -374,7 +382,7 @@
         }
 
         //每天8点重置
-        if (isNewDay() || index >= keywords.length) {
+        if (isNewDay() && count >= maxCount) {
             index = 0;
             maxCount += countStep;
             isPause = false;
