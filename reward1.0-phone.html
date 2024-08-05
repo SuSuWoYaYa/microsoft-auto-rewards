@@ -16,10 +16,15 @@
             </h1>
             <p><i>用edge移动版打开,允许弹窗</i></p>
             <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
-            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" checked />
+            <p><input id="inputBaseDelayTime" type="number" onchange="changeBaseDelayTime()"
+                    placeholder="搜索间隔时间,默认10秒" />
+                <label>秒</label>
+            </p>
+
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" />
             <label for="randomDate">添加当前时间</label>
 
-            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" />
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" checked />
             <label for="randomNumber">添加随机数字</label>
             <p color="dakgray">
                 <i>
@@ -212,18 +217,22 @@
 
     var index = 0;
     var count = 0;
+    //基础间隔时间
+    var baseDelayTime = 10;
     //本次间隔时间
     var delaytime = 0;
     //本次窗口打开时间
     var openLinkTime = 0;
     //窗口打开后关闭时间
-    var maxOpenLinkTime = 5;
+    var maxOpenLinkTime = 10;
     // 搜索停止次数
     var maxCount = 25;
+    // 搜索停止后每次增加次数
+    var countStep = 25;
 
     var isPause = false;
     var isDebug = false;
-    var isSearchRandomDate = true;
+    var isSearchRandomDate = false;
 
 
     //新打开的窗口句柄
@@ -237,6 +246,12 @@
 
     function onPause() {
         isPause = !isPause;
+
+        if (count >= maxCount) {
+            maxCount += countStep;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+        }
 
         if (isPause) {
             console.log("暂停");
@@ -278,6 +293,13 @@
         console.log("随机日期/数字搜索");
     }
 
+    function changeBaseDelayTime() {
+        inputBaseDelayTime = document.getElementById("inputBaseDelayTime");
+        baseDelayTime = parseInt(inputBaseDelayTime.value);
+        console.log("设置间隔时间" + baseDelayTime);
+    }
+
+
     function openonelink() {
         //搜索字后添加随机字符
         let randomSearchKey;
@@ -311,7 +333,7 @@
         let hour = date.getHours();
         let minute = date.getMinutes();
 
-        if (hour == 0 && minute == 0) {
+        if (hour == 8 && minute == 0) {
             return true;
         }
         else {
@@ -341,7 +363,7 @@
                 openonelink();
                 onNextIndex()
                 //随机延时
-                delaytime = RandomInt(5, 15);
+                delaytime = RandomInt(baseDelayTime, baseDelayTime + 15);
             }
         }
 
@@ -351,11 +373,15 @@
             closeOpenedLink();
         }
 
-        //每天0点重置
+        //每天8点重置
         if (isNewDay() || index >= keywords.length) {
             index = 0;
-            count = 0;
+            maxCount += countStep;
             isPause = false;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+            //随机延时几分钟
+            delaytime = RandomInt(500, 1500);
         }
 
         //N次后停止
