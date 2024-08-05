@@ -42,6 +42,9 @@
             <p id="showtime">倒计时等待</p>
 
             <p id="showKeyword">即将搜索</p>
+
+            <p id="open_rewards_bing_com" style="cursor: pointer;color:rgb(8, 97, 70)" onclick="openRewardsBingCom()">
+                打开微软积分网站</p>
     </div>
 </body>
 
@@ -204,6 +207,7 @@
     ];
 
 
+    var rewards_bing_com = "https://rewards.bing.com/?ref=rewardspanel"
     var index = 0;
     var count = 0;
 
@@ -285,6 +289,10 @@
         console.log("设置间隔时间" + baseDelayTime);
     }
 
+    function openRewardsBingCom() {
+        window.open(rewards_bing_com, "_blank");
+    }
+
     function openonelink() {
         //搜索字后添加随机字符
         let randomSearchKey;
@@ -363,7 +371,7 @@
         }
 
         //每天8点重置
-        if (isNewDay() || index >= keywords.length) {
+        if (isNewDay() && count >= maxCount) {
             index = 0;
             maxCount += countStep;
             isPause = false;
