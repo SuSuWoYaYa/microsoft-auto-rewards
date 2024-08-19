@@ -80,6 +80,22 @@
     //搜索关键字
     var keywords = [
         "鼠头鸭脖",
+        "上海杨佳事件",
+        "建国门事件",
+        "孙志刚!用生命取消了暂住证",
+        "钟南山 变脸",
+        "李文亮医生等8人被训诫",
+        "李文亮医生的训诫书",
+        "封控的上海抢菜",
+        "扒一扒武汉病毒所所长成功史",
+        "武汉病毒研究所 新冠病毒 ",
+        "魏则西事件",
+        "胡鑫宇失踪后死亡事件",
+        "郑州富士康暴动事件",
+        "俯卧撑死亡事件",
+        "躲猫猫死亡事件",
+        "喝开水死亡事件",
+        "一元纸币死亡事件",
         "胡耀邦",
         "习包子",
         "天安门屠杀",
@@ -382,8 +398,8 @@
         }
 
         //每天8点重置
-        if (isNewDay() && count >= maxCount) {
-            index = 0;
+        if (isNewDay() && isPause) {
+            onNextIndex();
             maxCount += countStep;
             isPause = false;
             document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
