@@ -397,7 +397,7 @@
 
 
         //每天8点重置
-        if (isNewDay() && isPause) {
+        if (isPause && isNewDay()) {
             onNextIndex();
             maxCount += countStep;
             isPause = false;
