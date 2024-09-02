@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-compatible" content="ie=edge">
+    <title>手机刷积分搜索 v1.2</title>
+</head>
+
+<body>
+    <div class="center">
+        <h3>
+            <p>刷微软积分搜索运行中 v1.3 </p>
+            </h1>
+            <p><i>用edge移动版打开,允许弹窗</i></p>
+            <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
+            <p><input id="inputBaseDelayTime" type="number" style="font-size:16px" onchange=" changeBaseDelayTime()"
+                    placeholder="搜索间隔时间,默认10秒" />
+                <label>秒</label>
+            </p>
+
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" />
+            <label for="randomDate">添加当前时间</label>
+
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" checked />
+            <label for="randomNumber">添加随机数字</label>
+            <p color="dakgray">
+                <i>
+                    <span id="pause" style="cursor: pointer;color:darkviolet">点我</span>
+                    开始/暂停，</i>
+            </p>
+            <p color="dakgray">
+                <i>
+                    <span id="nextlink" style="cursor: pointer;color:darkviolet">点我</span>
+                    更换当前搜索，
+                </i>
+            </p>
+            <p color="dakgray">
+                <i>
+                    <span id="halfTime" style="cursor: pointer;color:darkviolet">点我</span>
+                    时间减半，</i>
+            </p>
+            <p color="dakgray">
+                <i>
+                    <span id="debug" style="cursor: pointer;color:darkviolet">点我</span>
+                    输出ConsoleLog
+                </i>
+            </p>
+            <p id="showtime">倒计时等待</p>
+
+            <p id="showKeyword">即将搜索</p>
+    </div>
+</body>
+
+
+<script id="worker" type="app/worker">
+
+   setInterval(function() {
+        postMessage(0);
+    }, 1000);
+
+ </script>
+
+<script>
+
+    var hosts = "https://cn.bing.com/search?q=";
+
+    //可能是浏览器指纹
+    //手机版可以用分享链接的方式获取网页连接
+    //请自己修改该处为你电脑的浏览器指纹，用你自己的浏览器搜索的结果网址获取
+    //举例，下面搜索关键字积分后面的所有东西就是我们要的东西
+    //https://cn.bing.com/search?q=积分&cvid=8c50072b399147d49aa6772b9869c9ef&aqs=edge.0.69i59j0j69i59j0l6.803j0j1&pglt=171&FORM=ANSPA1&PC=ESBXSP
+
+    var extend = "&PC=OPALIOS&form=LWS001&ssp=1&cc=CN&setlang=zh-hans&ensearch=1&safesearch=moderate";
+
+
+
+    //搜索关键字
+    var keywords = [
+        "鼠头鸭脖",
+        "上海杨佳事件",
+        "建国门事件",
+        "孙志刚!用生命取消了暂住证",
+        "钟南山 变脸",
+        "李文亮医生等8人被训诫",
+        "李文亮医生的训诫书",
+        "封控的上海抢菜",
+        "扒一扒武汉病毒所所长成功史",
+        "武汉病毒研究所 新冠病毒 ",
+        "魏则西事件",
+        "胡鑫宇失踪后死亡事件",
+        "郑州富士康暴动事件",
+        "俯卧撑死亡事件",
+        "躲猫猫死亡事件",
+        "喝开水死亡事件",
+        "一元纸币死亡事件",
+        "胡耀邦",
+        "习包子",
+        "天安门屠杀",
+        "1989年春夏之交",
+        "天安门事件",
+        "达赖",
+        "学潮",
+        "薄熙来",
+        "六四学潮",
+        "大跃进",
+        "共残党",
+        "共惨党",
+        "共匪",
+        "赤匪",
+        "裆中央",
+        "朝鲜劳动党",
+        "中宣、真理部",
+        "上海帮",
+        "团派",
+        "九常委、九长老",
+        "政治局常委内幕",
+        "朝鲜内幕",
+        "朝鲜真相",
+        "蒋介石",
+        "蒋经国",
+        "袁世凯",
+        "平反64",
+        "六月四日",
+        "民国78年",
+        "中华民国",
+        "西藏流亡政府",
+        "青天白日旗",
+        "民进党",
+        "洪哲胜",
+        "独立台湾会",
+        "中华台北",
+        "台湾政论区",
+        "台湾自由联盟",
+        "美国之音",
+        "自由亚洲电台",
+        "记者无疆界",
+        "一党专政",
+        "一党独裁",
+        "新闻封锁",
+        "freedom",
+        "freechina",
+        "维权人士",
+        "维权律师",
+        "防火长城",
+        "great firewall",
+        "国家防火墙 滨兴",
+        "毒疫苗 长生生物",
+        "润学",
+        "2024年金门近海快艇翻覆事故",
+        "2024年厦金海域常态化执法巡查行动",
+        "反对逃犯条例修订草案运动后续事件",
+        "香港《基本法》第23条立法",
+        "歌曲《愿荣光归香港》禁制令生效",
+        "墨西哥驻厄瓜多尔大使馆遇袭事件",
+        "英国国会通过卢旺达法案",
+        "2024年玻利维亚未遂政变",
+        "2024年立法院改革争议",
+        "519草根决心行动",
+        "“民主倒退 公民抢救”521行动",
+        "2024年武装犯罪事件",
+        "2024年厄瓜多尔冲突",
+        "2024年海地冲突",
+        "2024年莫斯科番红花城市大厅恐怖袭击",
+        "2024年重大命案",
+        "李在明遇刺事件",
+        "克尔曼爆炸事件",
+        "塞瓦斯蒂安·皮涅拉之死和国葬",
+        "阿列克谢·纳瓦尔尼之死",
+        "邯郸初中生杀人埋尸案",
+        "胡塞武装截断红海航线",
+        "波音飞机事故频出",
+        "法国最年轻总理",
+        "厄瓜多尔进入“战争状态”",
+        "农民抗议浪潮席卷欧洲",
+        "丹麦女王退位",
+        "朝鲜半岛局势升温",
+        "不结盟运动峰会",
+        "巴西再工业化",
+        "“末日时钟”被拨到距午夜90秒",
+        "日本登月探测器着陆",
+        "韩国政治刺杀",
+        "访乌归来后，布林肯正推动允许乌使用美制武器攻击俄领土",
+        "南阳市方城县学校一宿舍发生火灾 13人遇难1人受伤",
+        "华为问界M7高速车祸",
+        "华为251事件",
+        "四无青年",
+        "四不青年现象有所抬头",
+        "当前我市 四不青年 现象有所抬头",
+        "不买房不买车不结婚不生孩子",
+        "当前我市四不青年",
+        "四无青年指的是什么",
+        "不结婚不生娃不买房不消费",
+        "不结婚不生孩子不买房",
+        "当前我市四不青年现象",
+        "楼市下跌",
+        "全国房价下跌最新消息",
+        "房价为什么下跌这么快最近",
+        "中国楼市下跌",
+        "房价下跌原因",
+        "房价为什么会跌",
+        "楼市暴跌",
+        "楼市为什么会崩",
+        "楼市下跌",
+        "躺平",
+        "躺平 百科",
+        "躺平是什么意思",
+        "躺平游戏",
+        "躺平即是正义",
+        "躺平 英文",
+        "躺平一词",
+        "躺平公式",
+        "躺平",
+        "躺平既是正义 原文",
+        "躺平即正义原文",
+        "躺平即是正义原帖",
+        "躺平即是正义 好心的旅行家",
+        "躺平即是正义pdf",
+        "躺平即是正义 全文",
+        "穷fire组",
+        "躺平fire",
+        "咖啡师fire",
+        "穷fire是什么意思",
+        "fire生活穷版",
+        "fire生活穷版小组",
+        "躺平fire是什么意思",
+        "fire计算器",
+
+    ];
+
+
+    var index = 0;
+    var count = 0;
+    //基础间隔时间
+    var baseDelayTime = 10;
+    //本次间隔时间
+    var delaytime = 0;
+    //本次窗口打开时间
+    var openLinkTime = 0;
+    //窗口打开后关闭时间
+    var maxOpenLinkTime = 10;
+    // 搜索停止次数
+    var maxCount = 25;
+    // 搜索停止后每次增加次数
+    var countStep = 25;
+
+    var isPause = false;
+    var isDebug = false;
+    var isSearchRandomDate = false;
+
+
+    //新打开的窗口句柄
+    var new_window_handle = null;
+
+    //随机范围内的整数
+    function RandomInt(min, max) {
+        //有可能出现max的整数
+        max--;
+        return Math.round(Math.random() * (max - min)) + min;
+    }
+
+
+    function onPause() {
+        isPause = !isPause;
+
+        if (count >= maxCount) {
+            maxCount += countStep;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+        }
+
+        if (isPause) {
+            console.log("暂停");
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>已暂停</font>";
+        } else {
+            console.log("开始");
+        }
+    }
+
+    function onNextLink() {
+        onNextIndex();
+        document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'Black '> " + keywords[index] + "</font> ";
+        if (isDebug) {console.log("下一个搜索=" + keywords[index]);}
+    }
+
+
+    function onNextIndex() {
+        index = RandomInt(0, keywords.length);
+
+        // if (isRandomSearch) {
+        //     index = RandomInt(0, keywords.length);
+        // } else {
+        //     index++;
+        // }
+    }
+
+    function onDebug() {
+        isDebug = !isDebug;
+        console.log("Debug!");
+    }
+
+    function onHalfTime() {
+        delaytime = parseInt(delaytime /= 2);
+        console.log("时间减半!");
+    }
+
+    function changeSearchRandomString() {
+        isSearchRandomDate = !isSearchRandomDate;
+        console.log("随机日期/数字搜索");
+    }
+
+    function changeBaseDelayTime() {
+        inputBaseDelayTime = document.getElementById("inputBaseDelayTime");
+        baseDelayTime = parseInt(inputBaseDelayTime.value);
+
+
+        //防止输入无效
+        if (isNaN(baseDelayTime) || baseDelayTime < 1) {
+            baseDelayTime = 10;
+            document.getElementById("inputBaseDelayTime").value = "";
+        }
+
+        console.log("设置间隔时间" + baseDelayTime);
+    }
+
+
+    function openonelink() {
+        //搜索字后添加随机字符
+        let randomSearchKey;
+        if (isSearchRandomDate) {
+            randomSearchKey = " " + new Date().toLocaleString();
+        } else {
+            randomSearchKey = RandomInt(0, keywords.length);
+        }
+
+        //bing搜索 + 搜索关键字 + 随机字符 + 浏览器指纹
+        //保存窗口句柄
+        new_window_handle = window.open(hosts + keywords[index] + randomSearchKey + extend, "_blank");
+        console.log("打开搜索=" + keywords[index] + randomSearchKey + ", " + new Date().toLocaleString());
+        count++;
+    }
+
+    //关闭窗口
+    function closeOpenedLink() {
+        if (new_window_handle != null) {
+            new_window_handle.close();
+            if (isDebug) {
+                console.log("关闭上一个窗口");
+            }
+        }
+    }
+
+    function isNewDay() {
+        let date = new Date();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let seconds = date.getSeconds();
+
+        //8:00:01判断为新的一天开始
+        if (hour == 8 && minute == 0 && seconds == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function updateUi() {
+
+        if (!isPause && index < keywords.length) {
+            delaytime--;
+
+            document.getElementById("showtime").innerHTML = "随机等待 = <font color = 'red'>  " + delaytime + " </font> 秒";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+            document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'red'> " + keywords[index] + "</font> ";
+
+            if (isDebug) {
+                //     let timer = new Date()
+                // console.log(timer.toLocaleString()) // 日期+时间 2023/5/28 23:07:35
+                console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
+            }
+
+            //倒计时结束打开窗口
+            if (delaytime <= 0) {
+                //重置关闭倒计时
+                openLinkTime = 0
+                openonelink();
+                onNextIndex()
+                //随机延时
+                delaytime = RandomInt(baseDelayTime, baseDelayTime + 15);
+            }
+        }
+
+        openLinkTime++;
+        // 倒计时n秒关闭已打开窗口
+        if (openLinkTime >= maxOpenLinkTime) {
+            closeOpenedLink();
+        }
+
+        //每天8点重置
+        if (isPause && isNewDay()) {
+
+            onNextIndex();
+            maxCount += countStep;
+            isPause = false;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+            //随机延时几分钟
+            delaytime = RandomInt(500, 1500);
+            console.log(new Date().toLocaleString() + ",自动开始");
+        }
+
+        //N次后停止
+        if (count >= maxCount) {
+            isPause = true;
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索" + maxCount + "次, 已停止</font>";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+        }
+
+    }
+
+    async function start() {
+        // console.log("开始");
+        document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+        document.getElementById("pause").onclick = onPause;
+        document.getElementById("nextlink").onclick = onNextLink;
+        document.getElementById("halfTime").onclick = onHalfTime;
+        document.getElementById("debug").onclick = onDebug;
+
+        delaytime = RandomInt(5, 15);
+        onNextIndex()
+
+        //通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
+        //先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。
+        //https://www.ruanyifeng.com/blog/2018/07/web-worker.html
+        //加载页面内定时器消息脚本   
+        var blob = new Blob([document.querySelector('#worker').textContent]);
+        var url = window.URL.createObjectURL(blob);
+        var myWorker = new Worker(url);
+
+        myWorker.onmessage = function (e) {
+            // e.data === 'some message'
+            //接收到每秒消息后更新动作
+            //console.log('Received message ' + event.data);
+            updateUi();
+        };
+
+
+    }
+
+    start();
+
+
+
+</script>
+
+
+
+
+<style>
+    .center {
+        margin: auto;
+        width: 80%;
+        border: 3px solid #73AD21;
+        padding: 10px;
+        text-align: center;
+        font-size: 17px;
+    }
+</style>
+
+</html>
