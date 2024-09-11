@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-compatible" content="ie=edge">
+    <title>手机刷积分搜索 v1.4</title>
+</head>
+
+<body>
+    <div class="center">
+        <h3>
+            <p>刷微软积分搜索运行中 v1.4 </p>
+            </h1>
+            <p><i>用edge移动版打开,允许弹窗</i></p>
+            <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
+            <p><input id="inputBaseDelayTime" type="number" style="font-size:16px" onchange=" changeBaseDelayTime()"
+                    placeholder="搜索间隔时间,默认30秒" />
+                <label>秒</label>
+            </p>
+
+            <!-- <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" />
+            <label for="randomDate">添加当前时间</label>
+
+            <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomNumber" checked />
+            <label for="randomNumber">添加随机数字</label> -->
+            <p color="dakgray">
+                <i>
+                    <span id="pause" style="cursor: pointer;color:darkviolet">点我</span>
+                    开始/暂停，</i>
+            </p>
+            <p color="dakgray">
+                <i>
+                    <span id="nextlink" style="cursor: pointer;color:darkviolet">点我</span>
+                    更换当前搜索，
+                </i>
+            </p>
+            <p color="dakgray">
+                <i>
+                    <span id="halfTime" style="cursor: pointer;color:darkviolet">点我</span>
+                    时间减半，</i>
+            </p>
+            <p color="dakgray">
+                <i>
+                    <span id="debug" style="cursor: pointer;color:darkviolet">点我</span>
+                    输出ConsoleLog
+                </i>
+            </p>
+            <p id="showtime">倒计时等待</p>
+
+            <p id="showKeyword">即将搜索</p>
+    </div>
+</body>
+
+
+<script id="worker" type="app/worker">
+
+   setInterval(function() {
+        postMessage(0);
+    }, 1000);
+
+ </script>
+
+<script>
+
+    var hosts = "https://cn.bing.com/search?q=";
+
+    //可能是浏览器指纹
+    //手机版可以用分享链接的方式获取网页连接
+    //请自己修改该处为你电脑的浏览器指纹，用你自己的浏览器搜索的结果网址获取
+    //举例，下面搜索关键字积分后面的所有东西就是我们要的东西
+    //https://cn.bing.com/search?q=积分&cvid=8c50072b399147d49aa6772b9869c9ef&aqs=edge.0.69i59j0j69i59j0l6.803j0j1&pglt=171&FORM=ANSPA1&PC=ESBXSP
+
+    var extend = "&PC=OPALIOS&form=LWS001&ssp=1&cc=CN&setlang=zh-hans&ensearch=1&safesearch=moderate";
+
+
+    //搜索关键字
+    var keywords = [
+
+        "鼠头鸭脖",
+        "塞尔达传说：众神的三角力量",
+        "塞尔达传说：织梦岛",
+        "塞尔达传说：时光之笛",
+        "塞尔达传说：魔力面具",
+        "塞尔达传说：不可思议的果实",
+        "塞尔达传说：风之律动",
+        "塞尔达传说：黄昏公主",
+        "塞尔达传说：缩小帽",
+        "塞尔达传说：幻影沙漏",
+        "塞尔达传说：大地的汽笛",
+        "塞尔达传说：御天之剑",
+        "塞尔达传说 众神的三角力量2",
+        "塞尔达传说：旷野之息",
+        "塞尔达传说：王国之泪",
+        "塞尔达传说 风之律动HD",
+        "塞尔达传说：织梦岛",
+        "塞尔达传说 御天之剑HD",
+        "塞尔达传说 时之笛3D",
+
+        "行尸走肉第八季",
+        "行尸走肉第九季",
+        "行尸走肉第十季",
+        "行尸走肉第六季",
+        "行尸走肉第一季",
+        "沼泽怪物第一季",
+        "路西法第三季",
+        "血疫第一季",
+        "邪恶力量第十三季",
+        "李尸朝鲜第一季",
+        "邪恶力量第十四季",
+        "局外人第一季",
+        "邪恶力量第十五季",
+        "美国恐怖故事第八季",
+        "极地恶灵第一季",
+        "行尸之惧第四季",
+        "新阴阳魔界第一季",
+        "行尸走肉：超越世界第一季",
+        "行尸走肉第三季",
+        "真相捕捉第一季",
+        "行尸走肉第二季",
+        "美国恐怖故事第九季",
+        "暗黑第一季",
+        "邪恶力量第一季",
+        "城堡岩第一季",
+        "行尸走肉第四季",
+        "行尸走肉第五季",
+        "极地恶灵第二季",
+        "真爱如血第一季",
+        "深入黑暗第一季",
+
+        "神盾局特工第五季",
+        "权力的游戏第八季",
+        "爱，死亡和机器人第一季",
+        "西部世界第二季",
+        "闪电侠第五季",
+        "天赋异禀第一季",
+        "权力的游戏第一季",
+        "闪电侠第四季",
+        "神盾局特工第六季",
+        "泰坦第一季",
+        "西部世界第三季",
+        "天赋异禀第二季",
+        "曼达洛人第一季",
+        "黑袍纠察队第一季",
+        "权力的游戏第七季",
+        "神盾局特工第七季",
+        "闪电侠第六季",
+        "西部世界第一季",
+        "黑暗物质三部曲第一季",
+        "末日巡逻队第一季",
+        "曼达洛人第二季",
+        "旺达幻视第一季",
+        "异星灾变第一季",
+        "猎鹰与冬兵第一季",
+        "地球百子第五季",
+        "权力的游戏第二季",
+        "无垠的太空第三季",
+        "末日孤舰第五季",
+        "绿箭侠第七季",
+        "权力的游戏第三季",
+
+
+        //豆瓣Top250电影
+        "星际穿越 Interstellar",
+        "辛德勒的名单 Schindler's List",
+        "唐伯虎点秋香 唐伯虎點秋香",
+        "致命ID Identity",
+        "指环王3 王者无敌 The Lord of the Rings: The Return of the King",
+        "城市之光 City Lights",
+        "这个男人来自地球 The Man from Earth",
+        "上帝也疯狂 The Gods Must Be Crazy",
+        "大话西游之大圣娶亲 西遊記大結局之仙履奇緣",
+        "放牛班的春天 Les choristes",
+        "天堂电影院 Nuovo Cinema Paradiso",
+        "搏击俱乐部 Fight Club",
+        "龙猫 となりのトトロ",
+        "恐怖直播 더 테러 라이브",
+        "导盲犬小Q クイール",
+        "迁徙的鸟 Le peuple migrateur",
+        "雨中曲 Singin' in the Rain",
+        "重庆森林 重慶森林",
+        "心迷宫",
+        "天空之城 天空の城ラピュタ",
+        "幽灵公主 もののけ姫",
+        "哪吒闹海",
+        "暖暖内含光 Eternal Sunshine of the Spotless Mind",
+        "变脸 Face/Off",
+        "倩女幽魂",
+        "再次出发之纽约遇见你 Begin Again",
+        "美丽心灵 A Beautiful Mind",
+        "电锯惊魂 Saw",
+        "触不可及 Intouchables",
+        "楚门的世界 The Truman Show",
+        "寿司之神 Jiro Dreams of Sushi",
+        "曾经 Once",
+        "我们俩",
+        "情书 Love Letter",
+        "忠犬八公的故事 Hachi: A Dog's Tale",
+        "海洋 Océans",
+        "叫我第一名 Front of the Class",
+        "教父 The Godfather",
+        "罪恶之城 Sin City",
+        "蝙蝠侠：黑暗骑士 The Dark Knight",
+        "梦之安魂曲 Requiem for a Dream",
+        "驯龙高手 How to Train Your Dragon",
+        "大闹天宫",
+        "夜访吸血鬼 Interview with the Vampire: The Vampire Chronicles",
+        "中央车站 Central do Brasil",
+        "穿越时空的少女 時をかける少女",
+        "侧耳倾听 耳をすませば",
+        "黑天鹅 Black Swan",
+        "勇敢的心 Braveheart",
+        "E.T. 外星人 E.T.: The Extra-Terrestrial",
+        "摩登时代 Modern Times",
+        "致命魔术 The Prestige",
+        "时空恋旅人 About Time",
+        "末代皇帝 The Last Emperor",
+        "巴黎淘气帮 Le petit Nicolas",
+        "恋恋笔记本 The Notebook",
+        "爱·回家 집으로...",
+        "谍影重重 The Bourne Identity",
+        "心灵捕手 Good Will Hunting",
+        "哈利·波特与魔法石 Harry Potter and the Sorcerer's Stone",
+        "傲慢与偏见 Pride & Prejudice",
+        "贫民窟的百万富翁 Slumdog Millionaire",
+        "黄金三镖客 Il buono, il brutto, il cattivo.",
+        "国王的演讲 The King's Speech",
+        "本杰明·巴顿奇事 The Curious Case of Benjamin Button",
+        "勇闯夺命岛 The Rock",
+        "岁月神偷 歲月神偷",
+        "哈利·波特与死亡圣器 Harry Potter and the Deathly Hallows: Part 2",
+        "蝴蝶 Le Papillon",
+        "一次别离 جدایی نادر از سیمین",
+        "纵横四海 緃横四海",
+        "神偷奶爸 Despicable Me",
+        "碧海蓝天 Le grand bleu",
+        "指环王1 魔戒再现 The Lord of the Rings: The Fellowship of the Ring",
+        "浪潮 Die Welle",
+        "人工智能 Artificial Intelligence: AI",
+        "风之谷 風の谷のナウシカ",
+        "剪刀手爱德华 Edward Scissorhands",
+        "一一",
+        "角斗士 Gladiator",
+        "未麻的部屋 Perfect Blue",
+        "泰坦尼克号 Titanic",
+        "追随 Following",
+        "大鱼 Big Fish",
+        "少年派的奇幻漂流 Life of Pi",
+        "窃听风暴 Das Leben der Anderen",
+        "美国往事 Once Upon a Time in America",
+        "东京物语 東京物語",
+        "V字仇杀队 V for Vendetta",
+        "低俗小说 Pulp Fiction",
+        "花样年华 花樣年華",
+        "惊魂记 Psycho",
+        "两杆大烟枪 Lock, Stock and Two Smoking Barrels",
+        "遗愿清单 The Bucket List",
+        "教父2 The Godfather: Part Ⅱ",
+        "疯狂的石头",
+        "阿飞正传 阿飛正傳",
+        "可可西里",
+        "小森林 冬春篇 リトル・フォレスト 冬・春",
+        "熔炉 도가니",
+        "爱在日落黄昏时 Before Sunset",
+        "喜剧之王 喜劇之王",
+        "布达佩斯大饭店 The Grand Budapest Hotel",
+        "拯救大兵瑞恩 Saving Private Ryan",
+        "辩护人 변호인",
+        "爆裂鼓手 Whiplash",
+        "无耻混蛋 Inglourious Basterds",
+        "枪火 鎗火",
+        "西西里的美丽传说 Malèna",
+        "机器人总动员 WALL·E",
+        "上帝之城 Cidade de Deus",
+        "活着",
+        "冰川时代 Ice Age",
+        "飞屋环游记 Up",
+        "与狼共舞 Dances with Wolves",
+        "萤火虫之墓 火垂るの墓",
+        "绿里奇迹 The Green Mile",
+        "疯狂原始人 The Croods",
+        "狮子王 The Lion King",
+        "7号房的礼物 7번방의 선물",
+        "无敌破坏王 Wreck-It Ralph",
+        "饮食男女 飲食男女",
+        "杀人回忆 살인의 추억",
+        "春光乍泄 春光乍洩",
+        "速度与激情5 Fast Five",
+        "海盗电台 The Boat That Rocked",
+        "十二怒汉 12 Angry Men",
+        "七宗罪 Se7en",
+        "加勒比海盗 Pirates of the Caribbean: The Curse of the Black Pearl",
+        "两小无猜 Jeux d'enfants",
+        "战争之王 Lord of War",
+        "英雄本色",
+        "撞车 Crash",
+        "指环王2 双塔奇兵 The Lord of the Rings: The Two Towers",
+        "燕尾蝶 スワロウテイル",
+        "荒蛮故事 Relatos salvajes",
+        "雨人 Rain Man",
+        "阳光姐妹淘 써니",
+        "小森林 夏秋篇 リトル・フォレスト 夏・秋",
+        "荒岛余生 Cast Away",
+        "教父3 The Godfather: Part III",
+        "罗生门 羅生門",
+        "不一样的天空 What's Eating Gilbert Grape",
+        "发条橙 A Clockwork Orange",
+        "海豚湾 The Cove",
+        "狩猎 Jagten",
+        "真爱至上 Love Actually",
+        "偷拐抢骗 Snatch",
+        "卡萨布兰卡 Casablanca",
+        "勇士 Warrior",
+        "猫鼠游戏 Catch Me If You Can",
+        "红辣椒 パプリカ",
+        "月球 Moon",
+        "告白",
+        "廊桥遗梦 The Bridges of Madison County",
+        "末路狂花 Thelma & Louise",
+        "玩具总动员3 Toy Story 3",
+        "沉默的羔羊 The Silence of the Lambs",
+        "青蛇",
+        "超能陆战队 Big Hero 6",
+        "谍影重重3 The Bourne Ultimatum",
+        "穆赫兰道 Mulholland Dr.",
+
+        "盗梦空间 Inception",
+        "这个杀手不太冷 Léon",
+        "阳光灿烂的日子",
+        "哈尔的移动城堡 ハウルの動く城",
+        "第六感 The Sixth Sense",
+        "玛丽和马克思 Mary and Max",
+        "谍影重重2 The Bourne Supremacy",
+        "断背山 Brokeback Mountain",
+        "我爱你 그대를 사랑합니다",
+        "东邪西毒 東邪西毒",
+        "虎口脱险 La grande vadrouille",
+        "大话西游之月光宝盒 西遊記第壹佰零壹回之月光寶盒",
+        "鬼子来了",
+        "甜蜜蜜",
+        "大卫·戈尔的一生 The Life of David Gale",
+        "牯岭街少年杀人事件 牯嶺街少年殺人事件",
+        "小鞋子 بچههای آسمان",
+        "猜火车 Trainspotting",
+        "爱在暹罗 รักแห่งสยาม",
+        "蓝色大门 藍色大門",
+        "被嫌弃的松子的一生 嫌われ松子の一生",
+        "无间道 無間道",
+        "借东西的小人阿莉埃蒂 借りぐらしのアリエッティ",
+        "七武士 七人の侍",
+        "罗马假日 Roman Holiday",
+        "菊次郎的夏天 菊次郎の夏",
+        "美丽人生 La vita è bella",
+        "让子弹飞",
+        "源代码 Source Code",
+        "恐怖游轮 Triangle",
+        "千钧一发 Gattaca",
+        "超脱 Detachment",
+        "蝙蝠侠：黑暗骑士崛起 The Dark Knight Rises",
+        "终结者2 审判日 Terminator 2: Judgment Day",
+        "我是山姆 I Am Sam",
+        "英国病人 The English Patient",
+        "怪兽电力公司 Monsters, Inc.",
+        "喜宴",
+        "魔女宅急便 魔女の宅急便",
+        "黑客帝国3 矩阵革命 The Matrix Revolutions",
+        "非常嫌疑犯 The Usual Suspects",
+        "音乐之声 The Sound of Music",
+        "忠犬八公物语 ハチ公物語",
+        "阿甘正传 Forrest Gump",
+        "霸王别姬",
+        "被解救的姜戈 Django Unchained",
+        "穿条纹睡衣的男孩 The Boy in the Striped Pajamas",
+        "钢琴家 The Pianist",
+        "初恋这件小事 สิ่งเล็กเล็กที่เรียกว่า...รัก",
+        "怦然心动 Flipped",
+        "入殓师 おくりびと",
+        "消失的爱人 Gone Girl",
+        "天使爱美丽 Le fabuleux destin d'Amélie Poulain",
+        "乱世佳人 Gone with the Wind",
+        "射雕英雄传之东成西就 射鵰英雄傳之東成西就",
+        "血钻 Blood Diamond",
+        "幸福终点站 The Terminal",
+        "完美的世界 A Perfect World",
+        "闻香识女人 Scent of a Woman",
+        "控方证人 Witness for the Prosecution",
+        "美国丽人 American Beauty",
+        "千与千寻 千と千尋の神隠し",
+        "死亡诗社 Dead Poets Society",
+        "萤火之森 蛍火の杜へ",
+        "达拉斯买家俱乐部 Dallas Buyers Club",
+        "黑客帝国 The Matrix",
+        "魂断蓝桥 Waterloo Bridge",
+        "卢旺达饭店 Hotel Rwanda",
+        "阿凡达 Avatar",
+        "禁闭岛 Shutter Island",
+        "假如爱有天意 클래식",
+        "飞越疯人院 One Flew Over the Cuckoo's Nest",
+        "素媛 소원",
+        "香水 Perfume: The Story of a Murderer",
+        "燃情岁月 Legends of the Fall",
+        "荒野生存 Into the Wild",
+        "新龙门客栈 新龍門客棧",
+        "肖申克的救赎 The Shawshank Redemption",
+        "秒速5厘米 秒速5センチメートル",
+        "朗读者 The Reader",
+        "爱在黎明破晓前 Before Sunrise",
+        "麦兜故事 麥兜故事",
+        "地球上的星星 Taare Zameen Par",
+        "记忆碎片 Memento",
+        "蝴蝶效应 The Butterfly Effect",
+        "海上钢琴师 La leggenda del pianista sull'oceano",
+        "三傻大闹宝莱坞 3 Idiots",
+
+        "星门",
+        "老鹰吃小鸡",
+        "黜龙",
+        "榴弹怕水",
+        "我就是不按套路出牌",
+        "百分之七",
+        "大魏读书人",
+        "七月未时",
+        "重生之似水流年",
+        "苍山月",
+        "大奉打更人",
+        "卖报小郎君",
+        "夜的命名术",
+        "会说话的肘子",
+        "深空彼岸",
+        "辰东",
+        "我的治愈系游戏",
+        "我会修空调",
+        "从红月开始",
+        "黑山老鬼",
+        "这游戏也太真实了",
+        "晨星LL",
+        "轮回乐园",
+        "那一只蚊子",
+        "不科学御兽",
+        "轻泉流响",
+        "猎魔我是专业的",
+        "七勾八勒",
+        "我的靠山好几座",
+        "胜己",
+        "斗破苍穹",
+        "天蚕土豆",
+        "黎明之剑",
+        "远瞳",
+        "诡秘之主",
+        "爱潜水的乌贼",
+        "这个明星很想退休",
+        "幼儿园一把手",
+        "原来我是大道圣人",
+        "紫色烈焰",
+        "我有一剑",
+        "青鸾峰上",
+        "剑来",
+        "烽火戏诸侯",
+        "踏星",
+        "随散飘风",
+        "剑道第一仙",
+        "萧瑾瑜",
+        "盖世人王",
+        "一叶青天",
+        "太荒吞天诀",
+        "铁马飞桥",
+        "最强战神",
+        "烈焰滔滔",
+        "万相之王",
+        "天蚕土豆",
+        "都市古仙医",
+        "超爽黑啤",
+        "全军列阵",
+        "知白",
+        "大魏芳华",
+        "西风紧",
+        "陆地键仙",
+        "六如和尚",
+        "日月风华",
+        "沙漠",
+        "灰烬领主",
+        "我爱小豆",
+        "将军好凶猛",
+        "更俗",
+        "医路青云",
+        "烟斗老哥",
+        "无敌剑域",
+        "青鸾峰上",
+        "大造化剑主",
+        "六道沉沦",
+        "星辰之主",
+        "减肥专家",
+        "武夫",
+        "平生未知寒",
+
+        "第四代 iPhone SE 将于明年初推出 首次采用 OLED 屏",
+        "微软解释Xbox云游戏未登陆App Store 无法获利",
+        "疑似iPhone 16 Pro/Pro Max金色版本原型图片曝光 ",
+        "iPhone 16官方保护壳无“拍摄”按钮开口 做成一体式设计",
+        "蓝牙 6.0 定位更准：可使苹果设备上的“查找”应用受益",
+        "苹果发布会将至 这些产品可能不会在 9 月份亮相",
+        "PS5 Pro 的性能预计与 Radeon 7700 XT GPU 相当",
+        "2012 年 Retina iPad还能用 可改造成便携式显示器",
+        "GameBaby 一款带方向键和按钮的手柄式保护壳",
+        "彭博社：苹果正在为 iPad 开发一款新的入门妙控键盘配件",
+        "GPT-4o mini排名雪崩 大模型竞技场规则更新，奥特曼的刷分小技巧无效了",
+        "《黑神话 悟空》四妹动捕演员COS自己 写真图集欣赏",
+        "三只羊女主播沫沫已有9个月未更新",
+        "华为Mate 70 Pro曝光 设计和配置遥遥领先上代",
+        "《金融时报》 华为问题百出的软件阻碍了中国在AI领域取代NVIDIA的努力",
+        "新疆塔克拉玛干沙漠养出了大螃蟹",
+        "小米充电宝25000 212W发布 支持PD 3.1 单口140W 499元史上最强",
+        "《黑神话》小狐狸萍萍图赏 有人认为她的衣服容易走光",
+        "仅几万块的自动驾驶系统 为何燃油车们死都不装？",
+        "《黑神话：悟空》壁纸级截图：迷人风景 绝美四妹",
+        "杨幂代言华为Mate XT非凡大师 “三折叠，太妙了”",
+        "Google已开始限制Android手机解锁Bootloader后使用AI功能",
+        "Apple Intelligence的最新测试版取消了地区限制 除中国外全球用户均可试用",
+        "Rust Linux内核维护者之一选择退出项目 原因是 非技术性废话 过多",
+        "告别双曲面屏时代 一加13最快10月底登场",
+        "又一机车女网红因车祸去世 年仅28岁",
+        "《黑神话：悟空》铁扇公主原画设定图 气质很优雅",
+        "《黑神话》玩家为刷差评买游戏 退款失败被网友群嘲",
+        "苹果可能在 11 月推出基于 M4 处理器的 Mac 产品",
+        "国航首架C919首次身披五星红旗飞抵北京 获民航最高礼仪过水门",
+
+        "台风信息发布系统",
+        "台风摩羯最新消息",
+        "台风摩羯最新情况",
+        "台风摩羯今日",
+        "台风摩羯撤离",
+        "第14号台风摩羯",
+        "台风摩羯路径",
+        "浙江台风摩羯",
+        "为何太阳系所有行星都在同一平面上旋转？",
+        "我国学者揭示早期宇宙星际间重元素起源之谜",
+        "比“胖五”更能扛！我国新一代载人运载火箭要来了",
+        "5G演进已开始 6G研究正进行",
+        "“早期暗能量”或让宇宙年轻10亿岁",
+        "Telegram创始人帕维尔·杜罗夫称法国的逮捕行动 误入歧途 ",
+        "SpaceX总裁喊话巴西法官  不要再骚扰Starlink公司 ",
+        "全球高端智能手机市场苹果稳居第一 华为激增80%成第三",
+        "三星Galaxy Z Fold 特别版渲染图现身 与现有型号区别明显",
+        "联想概念笔记本Auto Twist惊艳亮相 屏幕可自动翻盖、旋转",
+        "超强台风摩羯今将登陆海南、广东 强度超17级",
+        "赵明：荣耀三折技术储备不是问题",
+        "裁员、分拆、出售、停工，蒙眼狂奔的英特尔还没见到曙光",
+        "淘宝微信支付互通评测：全量支持有待更新 阿里比腾讯更积极？",
+        "TikTok就美国可能实施禁令一事向最高法院资深人士寻求帮助",
+        "初创公司指控英伟达和微软侵犯专利并组建采购联盟",
+        "黄仁勋都比不过 2024年最赚钱的是扎克伯格",
+        "阿里巴巴拓展美国业务出新招：发行信用卡",
+        "比尔·盖茨：建议每个人都将人工智能作为一种工具",
+        "辛巴晒1亿元转账单 已经打给辛选小助理 静待三只羊成为有担当的销售企业",
+        "美国电信业200亿美元大并购 Verizon欲现金收购Frontier",
+        "传英特尔拟出售Mobileye股份 并探索网络业务的战略选择",
+        "特朗普拟任命马斯克领导政府效率委员会 马斯克回应",
+        "高通公司暗示三星和Google正在开发混合现实智能眼镜",
+        "报告显示三大云计算服务提供商未能有效控制计算成本",
+        "美国司法部指控五名俄罗斯军事黑客利用恶意软件攻击美国与乌克兰政府机构",
+        "特朗普谈经济愿景 公司税率降至15% 聘请马斯克审查联邦支出",
+        "Google测试 Ask Photos 人工智能助手 它能理解照片中的内容",
+        "微软与StopNCII合作 从必应搜索引擎删除有害的私密图片",
+        "微软的Outlook Lite应用在不到一年的时间里下载量翻了一番",
+        "历史上的今天官网版",
+        "历史今天发生的事",
+        "历史上今天发生的大事",
+        "历史上的今天官网入口",
+        "今天历史上的大事",
+        "历史上今日大事件",
+        "今天历史大事件",
+        "历史上中国的今天",
+        "blender中文网",
+        "blender 权威指南",
+        "blended官网",
+        "blender超市",
+        "blender中文社区",
+        "blender是做什么的",
+        "blender 论坛",
+        "blender 可以做什么",
+        "blender中文网",
+        "blender 权威指南",
+        "blended官网",
+        "blender",
+        "blender是做什么的",
+        "blender 可以做什么",
+
+        "摩羯加强为今年风王",
+        "海洋馆白鲸凄厉尖叫",
+        "深圳全市停课",
+        "教孙女游泳收逐客令",
+        "台风天如何应对",
+        "误食蟑螂药心肌损害",
+        "点催爸妈送上学",
+        "一居民囤放水银泄漏",
+        "烈士陵园内跳广场舞",
+        "国足球迷喊伊万下课",
+        "范志毅想跳进黄浦江",
+        "进厂年后考上兰大",
+        "台风摩羯天跳三级",
+        "中日球迷台冲突",
+        "印度加紧边境基建",
+        "后冒充交警查车",
+        "辟谣游客被割腰子",
+        "印死于招聘体测",
+        "国足积分榜倒数第一",
+        "央视回应不转播国足",
+        "大学开学海报打错字",
+        "陪读考上大学后放弃",
+        "吃粉视频被开黄腔",
+        "摔死没拴绳宠物狗",
+        "全红婵为大学致词",
+        "国足比日本",
+        "女婴腹中取出寄生胎",
+        "失联镇长遗体被找到",
+        "内塔尼亚胡或无退路",
+        "网红小英莫遗体找到",
+        "迷晕女儿让男友性侵",
+        "爱奇艺回应",
+        "高铁公里万度电",
+        "马克龙任命法新总理",
+        "世预赛国足vs日本",
+        "朝鲜再向韩放飞气球",
+        "韩素希与母断绝关系",
+        "国每秒喝杯奶茶",
+        "居民私囤水银泄漏",
+        "黄轩方否认家暴",
+        "古代为什么将一斤定为16两",
+        "你听过导师最有水平的一句话是什么",
+        "央行买入 4000 亿元特别国债",
+        "夫妻离婚都不要女儿法院判不准离",
+        "日本多地「大米荒」持续",
+        "2024年内地暑期档遇冷",
+        "柳舟记大结局",
+        "象帝先宣布解散全员被裁",
+        "韩国「青瓦台魔咒」",
+        "苹果官方回应 iPhone16 不支持微信",
+        "中国大学跌得最惨的专业，从“天选”变“天坑”",
+        "现在到底还有谁会坐公交车？",
+        "县城的产业，越来越硬核了",
+        "两家千亿巨头宣布合并，什么信号？",
+        "平替生活，收割了多少抠门中产",
+        "字节的野心藏不住了",
+        "赛力斯想当“大太太”",
+        "谁将扣响全球性衰退的扳机",
+        "大学排名暴跌30名 同学纷纷转学自救 我慌了",
+        "谷爱凌：从天才少女到双面人“谷圣”",
+        "招牌服务，海底捞供不起了",
+        "互联网30周年 中国公司集体做对了什么 ",
+        "中西部非省会第一城，不想“吃老本”了？",
+        "上海迪士尼挤满了“中年公主”",
+        "县城找不到销售以外的工作",
+        "诡秘之主二十二条序列途径图",
+        "诡秘之主22条神之途径",
+        "诡秘之主二十二条神之途径",
+        "诡秘之主 神之序列",
+        "诡秘之主成神序列",
+        "诡秘之主 途径表",
+        "诡秘之主序列表",
+        "诡秘之主22条神之途径全序列",
+        "诡秘之主 封印物 列表",
+        "诡秘之主封印物图鉴",
+        "诡秘之主0级封印物",
+        "诡秘之主001封印物是什么",
+        "诡秘之主 唯一性",
+        "诡秘之主封印物设定",
+        "诡秘之主封印物介绍",
+        "诡秘之主封印物等级",
+        "诡秘之主远古太阳神来历",
+        "诡秘之主全知全能的神",
+        "诡秘之主的邪神",
+        "诡秘之主八个古神",
+        "诡秘之主 真神篇",
+        "诡秘之主众神尊名",
+        "诡秘之主七神介绍",
+        "诡秘之主七位正神",
+        "远古太阳神和真实造物主",
+        "真实造物主和远古太阳神",
+        "远古太阳神死了吗",
+        "远古太阳神被分食",
+        "八位天使之王",
+        "诡秘远古太阳神尊名",
+        "远古太阳神的尊名",
+        "远古太阳神为什么叫白造",
+
+        "上海杨佳事件",
+        "建国门事件",
+        "孙志刚!用生命取消了暂住证",
+        "钟南山 变脸",
+        "李文亮医生等8人被训诫",
+        "李文亮医生的训诫书",
+        "封控的上海抢菜",
+        "扒一扒武汉病毒所所长成功史",
+        "武汉病毒研究所 新冠病毒 ",
+        "魏则西事件",
+        "胡鑫宇失踪后死亡事件",
+        "郑州富士康暴动事件",
+        "俯卧撑死亡事件",
+        "躲猫猫死亡事件",
+        "喝开水死亡事件",
+        "一元纸币死亡事件",
+        "胡耀邦",
+        "习包子",
+        "天安门屠杀",
+        "1989年春夏之交",
+        "天安门事件",
+        "达赖",
+        "学潮",
+        "薄熙来",
+        "六四学潮",
+        "大跃进",
+        "共残党",
+        "共惨党",
+        "共匪",
+        "赤匪",
+        "裆中央",
+        "朝鲜劳动党",
+        "中宣、真理部",
+        "上海帮",
+        "团派",
+        "九常委、九长老",
+        "政治局常委内幕",
+        "朝鲜内幕",
+        "朝鲜真相",
+        "蒋介石",
+        "蒋经国",
+        "袁世凯",
+        "平反64",
+        "六月四日",
+        "民国78年",
+        "中华民国",
+        "西藏流亡政府",
+        "青天白日旗",
+        "民进党",
+        "洪哲胜",
+        "独立台湾会",
+        "中华台北",
+        "台湾政论区",
+        "台湾自由联盟",
+        "美国之音",
+        "自由亚洲电台",
+        "记者无疆界",
+        "一党专政",
+        "一党独裁",
+        "新闻封锁",
+        "freedom",
+        "freechina",
+        "维权人士",
+        "维权律师",
+        "防火长城",
+        "great firewall",
+        "国家防火墙 滨兴",
+        "毒疫苗 长生生物",
+        "润学",
+        "2024年金门近海快艇翻覆事故",
+        "2024年厦金海域常态化执法巡查行动",
+        "反对逃犯条例修订草案运动后续事件",
+        "香港《基本法》第23条立法",
+        "歌曲《愿荣光归香港》禁制令生效",
+        "墨西哥驻厄瓜多尔大使馆遇袭事件",
+        "英国国会通过卢旺达法案",
+        "2024年玻利维亚未遂政变",
+        "2024年立法院改革争议",
+        "519草根决心行动",
+        "“民主倒退, 公民抢救”521行动",
+        "2024年武装犯罪事件",
+        "2024年厄瓜多尔冲突",
+        "2024年海地冲突",
+        "2024年莫斯科番红花城市大厅恐怖袭击",
+        "2024年重大命案",
+        "李在明遇刺事件",
+        "克尔曼爆炸事件",
+        "塞瓦斯蒂安·皮涅拉之死和国葬",
+        "阿列克谢·纳瓦尔尼之死",
+        "邯郸初中生杀人埋尸案",
+        "胡塞武装截断红海航线",
+        "波音飞机事故频出",
+        "法国最年轻总理",
+        "厄瓜多尔进入“战争状态”",
+        "农民抗议浪潮席卷欧洲",
+        "丹麦女王退位",
+        "朝鲜半岛局势升温",
+        "不结盟运动峰会",
+        "巴西再工业化",
+        "“末日时钟”被拨到距午夜90秒",
+        "日本登月探测器着陆",
+        "韩国政治刺杀",
+        "访乌归来后,布林肯正推动允许乌使用美制武器攻击俄领土",
+        "南阳市方城县学校一宿舍发生火灾 13人遇难1人受伤",
+        "华为问界M7高速车祸",
+        "华为251事件",
+        "四无青年",
+        "四不青年现象有所抬头",
+        "当前我市 四不青年 现象有所抬头",
+        "不买房不买车不结婚不生孩子",
+        "当前我市四不青年",
+        "四无青年指的是什么",
+        "不结婚不生娃不买房不消费",
+        "不结婚不生孩子不买房",
+        "当前我市四不青年现象",
+        "楼市下跌",
+        "全国房价下跌最新消息",
+        "房价为什么下跌这么快最近",
+        "中国楼市下跌",
+        "房价下跌原因",
+        "房价为什么会跌",
+        "楼市暴跌",
+        "楼市为什么会崩",
+        "楼市下跌",
+        "躺平",
+        "躺平 百科",
+        "躺平是什么意思",
+        "躺平游戏",
+        "躺平即是正义",
+        "躺平 英文",
+        "躺平一词",
+        "躺平公式",
+        "躺平",
+        "躺平既是正义 原文",
+        "躺平即正义原文",
+        "躺平即是正义原帖",
+        "躺平即是正义 好心的旅行家",
+        "躺平即是正义pdf",
+        "躺平即是正义 全文",
+        "穷fire组",
+        "躺平fire",
+        "咖啡师fire",
+        "穷fire是什么意思",
+        "fire生活穷版",
+        "fire生活穷版小组",
+        "躺平fire是什么意思",
+        "fire计算器",
+
+
+    ];
+
+
+
+    var index = 0;
+    var count = 0;
+    //基础间隔时间
+    var baseDelayTime = 30;
+    //本次间隔时间
+    var delaytime = 0;
+    //本次窗口打开时间
+    var openLinkTime = 0;
+    //窗口打开后关闭时间
+    var maxOpenLinkTime = 10;
+    // 搜索停止次数
+    var maxCount = 30;
+    // 搜索停止后每次增加次数
+    var countStep = 30;
+
+    var isPause = false;
+    var isDebug = false;
+    var isSearchRandomDate = false;
+
+
+    //新打开的窗口句柄
+    var new_window_handle = null;
+
+    //随机范围内的整数
+    function RandomInt(min, max) {
+
+        return Math.round(Math.random() * (max - min)) + min;
+    }
+
+
+    function onPause() {
+        isPause = !isPause;
+
+        if (count >= maxCount) {
+            maxCount += countStep;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+        }
+
+        if (isPause) {
+            console.log("暂停");
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>已暂停</font>";
+        } else {
+            console.log("开始");
+        }
+    }
+
+    function onNextLink() {
+        onNextIndex();
+        document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'Black '> " + keywords[index] + "</font> ";
+        if (isDebug) {console.log("下一个搜索=" + keywords[index]);}
+    }
+
+
+    function onNextIndex() {
+        index = RandomInt(0, keywords.length);
+
+        if (index >= keywords.length) {
+            index = keywords.length - 1;
+        }
+
+    }
+
+    function onDebug() {
+        isDebug = !isDebug;
+        console.log("Debug!");
+    }
+
+    function onHalfTime() {
+        delaytime = parseInt(delaytime /= 2);
+        console.log("时间减半!");
+    }
+
+    function changeSearchRandomString() {
+        isSearchRandomDate = !isSearchRandomDate;
+        console.log("随机日期/数字搜索");
+    }
+
+    function changeBaseDelayTime() {
+        inputBaseDelayTime = document.getElementById("inputBaseDelayTime");
+        baseDelayTime = parseInt(inputBaseDelayTime.value);
+
+
+        //防止输入无效
+        if (isNaN(baseDelayTime) || baseDelayTime < 1) {
+            baseDelayTime = 30;
+            document.getElementById("inputBaseDelayTime").value = "";
+        }
+
+        console.log("设置间隔时间" + baseDelayTime);
+    }
+
+
+    function openonelink() {
+
+        //bing搜索 + 搜索关键字  + 浏览器指纹
+        //保存窗口句柄
+        //new_window_handle = window.open(hosts + keywords[index] + extend, "_blank");
+
+
+        //bing搜索 + 搜索关键字  + 浏览器指纹
+        //保存窗口句柄
+        new_window_handle = window.open(hosts + keywords[index] + extend, "_blank");
+
+        console.log("打开搜索=" + keywords[index] + ", " + new Date().toLocaleString());
+        count++;
+    }
+
+    //关闭窗口
+    function closeOpenedLink() {
+        if (new_window_handle != null) {
+            new_window_handle.close();
+            if (isDebug) {
+                console.log("关闭上一个窗口");
+            }
+        }
+    }
+
+    function isNewDay() {
+        let date = new Date();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let seconds = date.getSeconds();
+
+        //8:00:01判断为新的一天开始
+        if (hour == 8 && minute == 0 && seconds == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function updateUi() {
+
+        if (!isPause) {
+            delaytime--;
+
+            document.getElementById("showtime").innerHTML = "随机等待 = <font color = 'red'>  " + delaytime + " </font> 秒";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+            document.getElementById("showKeyword").innerHTML = "即将搜索 <font color = 'red'> " + keywords[index] + "</font> ";
+
+            if (isDebug) {
+                //     let timer = new Date()
+                // console.log(timer.toLocaleString()) // 日期+时间 2023/5/28 23:07:35
+                console.log("延时=" + delaytime + ", " + new Date().toLocaleString());
+            }
+
+            //倒计时结束打开窗口
+            if (delaytime <= 0) {
+                //重置关闭倒计时
+                openLinkTime = 0
+                openonelink();
+                onNextIndex()
+                //随机延时
+                delaytime = RandomInt(baseDelayTime, baseDelayTime + baseDelayTime);
+            }
+        }
+
+        openLinkTime++;
+        // 倒计时n秒关闭已打开窗口
+        if (openLinkTime >= maxOpenLinkTime) {
+            closeOpenedLink();
+        }
+
+        //每天8点重置
+        if (isPause && isNewDay()) {
+
+            onNextIndex();
+            maxCount += countStep;
+            isPause = false;
+            document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+            //随机延时几分钟
+            delaytime = RandomInt(500, 1500);
+            console.log(new Date().toLocaleString() + ",自动开始");
+        }
+
+        //N次后停止
+        if (count >= maxCount) {
+            isPause = true;
+            document.getElementById("showtime").innerHTML = " <font color = 'red'>搜索" + maxCount + "次, 已停止</font>";
+            document.getElementById("index").innerHTML = "已搜索 <font color = 'green'>" + count + "</font> 次";
+        }
+
+    }
+
+    async function start() {
+        // console.log("开始");
+        document.getElementById("maxCount").innerHTML = ", 目标" + maxCount + "次";
+
+        document.getElementById("pause").onclick = onPause;
+        document.getElementById("nextlink").onclick = onNextLink;
+        document.getElementById("halfTime").onclick = onHalfTime;
+        document.getElementById("debug").onclick = onDebug;
+
+        delaytime = RandomInt(baseDelayTime, baseDelayTime + baseDelayTime);
+        onNextIndex();
+
+
+
+        //通常情况下,Worker 载入的是一个单独的 JavaScript 脚本文件,但是也可以载入与主线程在同一个网页的代码。
+        //先将嵌入网页的脚本代码,转成一个二进制对象,然后为这个二进制对象生成 URL,再让 Worker 加载这个 URL。
+        //https://www.ruanyifeng.com/blog/2018/07/web-worker.html
+
+        //加载页面内定时器消息脚本
+        var blob = new Blob([document.querySelector('#worker').textContent]);
+        var url = window.URL.createObjectURL(blob);
+        var myWorker = new Worker(url);
+
+        myWorker.onmessage = function (e) {
+            // e.data === 'some message'
+            //接收到每秒消息后更新动作
+            //console.log('Received message ' + event.data);
+            updateUi();
+        };
+
+
+    }
+
+    start();
+
+
+
+</script>
+
+
+
+
+<style>
+    .center {
+        margin: auto;
+        width: 80%;
+        border: 3px solid #73AD21;
+        padding: 10px;
+        text-align: center;
+        font-size: 17px;
+    }
+</style>
+
+</html>
