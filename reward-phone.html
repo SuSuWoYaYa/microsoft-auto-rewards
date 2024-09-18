@@ -17,7 +17,7 @@
             <p><i>用edge移动版打开,允许弹窗</i></p>
             <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
             <p><input id="inputBaseDelayTime" type="number" style="font-size:16px" onchange=" changeBaseDelayTime()"
-                    placeholder="搜索间隔时间,默认30秒" />
+                    placeholder="搜索间隔时间,默认80秒" />
                 <label>秒</label>
             </p>
 
@@ -841,7 +841,7 @@
     var index = 0;
     var count = 0;
     //基础间隔时间
-    var baseDelayTime = 30;
+    var baseDelayTime = 80;
     //本次间隔时间
     var delaytime = 0;
     //本次窗口打开时间
@@ -1033,7 +1033,7 @@
         document.getElementById("nextlink").onclick = onNextLink;
         document.getElementById("halfTime").onclick = onHalfTime;
         document.getElementById("debug").onclick = onDebug;
-
+        document.getElementById("inputBaseDelayTime").placeholder = "搜索间隔时间,默认" + baseDelayTime + "秒";
         delaytime = RandomInt(baseDelayTime, baseDelayTime + baseDelayTime);
         onNextIndex();
 

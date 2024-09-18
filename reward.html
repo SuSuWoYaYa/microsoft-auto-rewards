@@ -11,13 +11,13 @@
         <h3>
             <p>刷微软积分搜索运行中 v1.4</p>
             </h1>
-            <p id="open_rewards_bing_com" style="cursor: pointer;color:rgb(8, 97, 70)" onclick="openRewardsBingCom()">
+            <p id="open_rewards_bing_com" style="cursor: pointer;color:rgb(132 12 244)" onclick="openRewardsBingCom()">
                 打开微软积分网站</p>
             <p><i>注意：允许弹窗,禁用锁屏,锁屏后浏览器可能不执行js。</i></p>
             <p><label id="index">已搜索次</label><label id="maxCount">目标搜索次</label></p>
 
             <p><input id="inputBaseDelayTime" type="number" style="font-size:16px" onchange="changeBaseDelayTime()"
-                    placeholder="搜索间隔时间,默认300秒" />
+                    placeholder="搜索间隔时间,默认100秒" />
                 <label>秒</label>
             </p>
             <!-- <input type="radio" onclick="changeSearchRandomString()" name="RandomString" value="randomDate" />
@@ -834,7 +834,7 @@
     var count = 0;
 
     //基础间隔时间
-    var baseDelayTime = 300;
+    var baseDelayTime = 100;
     //本次间隔时间
     var delaytime = 0;
     //本次窗口打开时间
@@ -1034,6 +1034,7 @@
         document.getElementById("nextlink").onclick = onNextLink;
         document.getElementById("halfTime").onclick = onHalfTime;
         document.getElementById("debug").onclick = onDebug;
+        document.getElementById("inputBaseDelayTime").placeholder = "搜索间隔时间,默认" + baseDelayTime + "秒";
 
         delaytime = RandomInt(baseDelayTime, baseDelayTime + baseDelayTime);
         onNextIndex();
